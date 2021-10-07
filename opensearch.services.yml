@@ -1,0 +1,4 @@
+services:
+  plugin.manager.opensearch.connector:
+    class: Drupal\opensearch\Connector\ConnectorPluginManager
+    parent: default_plugin_manager

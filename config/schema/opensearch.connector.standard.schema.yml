@@ -1,0 +1,7 @@
+plugin.plugin_configuration.opensearch_connector.standard:
+  type: config_object
+  label: 'OpenSearch standard connector settings'
+  mapping:
+    url:
+      type: string
+      label: 'The URL to the OpenSearch cluster.'
