@@ -2,3 +2,9 @@ services:
   plugin.manager.opensearch.connector:
     class: Drupal\opensearch\Connector\ConnectorPluginManager
     parent: default_plugin_manager
+  logger.channel.opensearch:
+    parent: logger.channel_base
+    arguments: ['opensearch']
+  opensearch.search_api_client_factory:
+    class: Drupal\opensearch\SearchAPI\SearchAPIClientFactory
+    arguments: ['@search_api.fields_helper', '@logger.channel.opensearch']
