@@ -1,10 +1,38 @@
 services:
+
   plugin.manager.opensearch.connector:
     class: Drupal\opensearch\Connector\ConnectorPluginManager
     parent: default_plugin_manager
+
   logger.channel.opensearch:
     parent: logger.channel_base
     arguments: ['opensearch']
-  opensearch.search_api_client_factory:
-    class: Drupal\opensearch\SearchAPI\SearchAPIClientFactory
-    arguments: ['@search_api.fields_helper', '@logger.channel.opensearch']
+
+  opensearch.index_param_builder:
+    class: Drupal\opensearch\SearchAPI\IndexParamBuilder
+    arguments: ['@event_dispatcher']
+  opensearch.more_like_this_param_builder:
+    class: Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder
+  opensearch.query_param_builder:
+    class: Drupal\opensearch\SearchAPI\QueryParamBuilder
+    arguments:
+      - '@search_api.fields_helper'
+      - '@opensearch.more_like_this_param_builder'
+      - '@event_dispatcher'
+      - '@logger.channel.opensearch'
+  opensearch.query_result_parser:
+    class: Drupal\opensearch\SearchAPI\QueryResultParser
+    arguments: ['@search_api.fields_helper']
+  opensearch.field_mapper:
+    class: Drupal\opensearch\SearchAPI\FieldMapper
+    arguments: ['@event_dispatcher']
+
+  opensearch.backend_client_factory:
+    class: Drupal\opensearch\SearchAPI\BackendClientFactory
+    arguments:
+      - '@opensearch.query_param_builder'
+      - '@opensearch.query_result_parser'
+      - '@opensearch.index_param_builder'
+      - '@search_api.fields_helper'
+      - '@opensearch.field_mapper'
+      - '@logger.channel.opensearch'

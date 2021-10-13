@@ -1,0 +1,65 @@
+<?php
+
+namespace Drupal\opensearch\SearchAPI;
+
+/**
+ * Provides a param builder for 'More Like This' queries.
+ */
+class MoreLikeThisParamBuilder {
+
+  /**
+   * Setup the More like this clause of the OpenSearch query.
+   *
+   * Adjusts $body to have a more like this query.
+   *
+   * @param array $mltOptions
+   *   Array of query options. We're most interested here in the key of 'mlt',
+   *   which should contain the following keys:
+   *   - id: To be used as the like_text in the more_like_this query.
+   *   - fields: Array of fields.
+   *
+   * @return array
+   *   The MLT query params.
+   */
+  public function buildMoreLikeThisQuery(array $mltOptions): array {
+
+    $mltQuery['more_like_this'] = [];
+
+    // Transform input parameter "id" to "ids" if available.
+    if (isset($mltOptions['id'])) {
+      $mltOptions['ids'] =
+        is_array($mltOptions['id']) ?
+          $mltOptions['id'] :
+          [$mltOptions['id']];
+      unset($mltOptions['id']);
+    }
+
+    // Input parameter: ids
+    if (isset($mltOptions['ids'])) {
+      $mltQuery['more_like_this']['ids'] = $mltOptions['ids'];
+    }
+
+    // Input parameter: like
+    if (isset($mltOptions['like'])) {
+      $mltQuery['more_like_this']['like'] = $mltOptions['like'];
+    }
+
+    // Input parameter: unlike
+    if (isset($mltOptions['unlike'])) {
+      $mltQuery['more_like_this']['unlike'] = $mltOptions['unlike'];
+    }
+
+    // Input parameter: fields
+    $mltQuery['more_like_this']['fields'] = array_values(
+      $mltOptions['fields']
+    );
+    // TODO: Make this settings configurable in the view.
+    $mltQuery['more_like_this']['max_query_terms'] = 1;
+    $mltQuery['more_like_this']['min_doc_freq'] = 1;
+    $mltQuery['more_like_this']['min_term_freq'] = 1;
+
+    //      $body['query']['bool']['must'][] = $mltQuery;
+    return $mltQuery;
+  }
+
+}

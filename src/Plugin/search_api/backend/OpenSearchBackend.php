@@ -13,8 +13,8 @@ use Drupal\Core\Url;
 use Drupal\opensearch\Connector\ConnectorPluginManager;
 use Drupal\opensearch\Connector\InvalidConnectorException;
 use Drupal\opensearch\Connector\OpenSearchConnectorInterface;
-use Drupal\opensearch\SearchAPI\SearchAPIClient;
-use Drupal\opensearch\SearchAPI\SearchAPIClientFactory;
+use Drupal\opensearch\SearchAPI\BackendClient;
+use Drupal\opensearch\SearchAPI\BackendClientFactory;
 use Drupal\search_api\Backend\BackendPluginBase;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Query\QueryInterface;
@@ -36,18 +36,18 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
   protected $connectorPluginManager;
 
   /**
-   * The OpenSearch Search API client factory.
+   * The OpenSearch backend client factory.
    *
-   * @var \Drupal\opensearch\SearchAPI\SearchAPIClientFactory
+   * @var \Drupal\opensearch\SearchAPI\BackendClientFactory
    */
-  protected $sapiClientFactory;
+  protected $backendClientFactory;
 
   /**
    * The OpenSearch Search API client.
    *
-   * @var \Drupal\opensearch\SearchAPI\SearchAPIClient
+   * @var \Drupal\opensearch\SearchAPI\BackendClient
    */
-  protected $sapiClient;
+  protected $backendClient;
 
   /**
    * The OpenSearch client.
@@ -61,12 +61,12 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
    * @param $plugin_id
    * @param array $plugin_definition
    * @param \Drupal\opensearch\Connector\ConnectorPluginManager $connectorPluginManager
-   * @param \Drupal\opensearch\SearchAPI\SearchAPIClientFactory $sapiClientFactory
+   * @param \Drupal\opensearch\SearchAPI\BackendClientFactory $sapiClientFactory
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ConnectorPluginManager $connectorPluginManager, SearchAPIClientFactory $sapiClientFactory) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ConnectorPluginManager $connectorPluginManager, BackendClientFactory $sapiClientFactory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->connectorPluginManager = $connectorPluginManager;
-    $this->sapiClientFactory = $sapiClientFactory;
+    $this->backendClientFactory = $sapiClientFactory;
   }
 
   /**
@@ -78,7 +78,7 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
       $plugin_id,
       $plugin_definition,
       $container->get('plugin.manager.opensearch.connector'),
-      $container->get('opensearch.search_api_client_factory')
+      $container->get('opensearch.backend_client_factory')
     );
   }
 
@@ -236,14 +236,14 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
   /**
    * Gets the OpenSearch Search API client.
    *
-   * @return \Drupal\opensearch\SearchAPI\SearchAPIClient
+   * @return \Drupal\opensearch\SearchAPI\BackendClient
    *   The OpenSearch Search API client.
    */
-  public function getSapiClient(): SearchAPIClient {
-    if (!isset($this->sapiClient)) {
-      $this->sapiClient = $this->sapiClientFactory->create($this->getClient(), $this->getConnector()->getUrl());
+  public function getBackendClient(): BackendClient {
+    if (!isset($this->backendClient)) {
+      $this->backendClient = $this->backendClientFactory->create($this->getClient(), $this->getConnector()->getUrl());
     }
-    return $this->sapiClient;
+    return $this->backendClient;
   }
 
   /**
@@ -289,28 +289,28 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
    * {@inheritdoc}
    */
   public function indexItems(IndexInterface $index, array $items): array {
-    return $this->getSapiClient()->indexItems($index, $items);
+    return $this->getBackendClient()->indexItems($index, $items);
   }
 
   /**
    * {@inheritdoc}
    */
   public function deleteItems(IndexInterface $index, array $item_ids) {
-    return $this->getSapiClient()->deleteItems($index, $item_ids);
+    return $this->getBackendClient()->deleteItems($index, $item_ids);
   }
 
   /**
    * {@inheritdoc}
    */
   public function deleteAllIndexItems(IndexInterface $index, $datasource_id = NULL) {
-    $this->getSapiClient()->deleteAllIndexItems($index, $datasource_id);
+    $this->getBackendClient()->deleteAllIndexItems($index, $datasource_id);
   }
 
   /**
    * {@inheritdoc}
    */
   public function search(QueryInterface $query) {
-    $this->getSapiClient()->search($query);
+    $this->getBackendClient()->search($query);
   }
 
 }
