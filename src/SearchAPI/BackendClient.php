@@ -66,13 +66,6 @@ class BackendClient implements BackendClientInterface {
   protected $logger;
 
   /**
-   * The OpenSearch URL.
-   *
-   * @var string
-   */
-  protected $url;
-
-  /**
    * @param \Drupal\opensearch\SearchAPI\QueryParamBuilder $queryParamBuilder
    * @param \Drupal\opensearch\SearchAPI\QueryResultParser $resultParser
    * @param \Drupal\opensearch\SearchAPI\IndexParamBuilder $indexParamBuilder
@@ -82,14 +75,13 @@ class BackendClient implements BackendClientInterface {
    * @param \Elasticsearch\Client $client
    * @param string $url
    */
-  public function __construct(QueryParamBuilder $queryParamBuilder, QueryResultParser $resultParser, IndexParamBuilder $indexParamBuilder, FieldsHelperInterface $fieldsHelper, FieldMapper $fieldParamsBuilder, LoggerInterface $logger, Client $client, string $url) {
+  public function __construct(QueryParamBuilder $queryParamBuilder, QueryResultParser $resultParser, IndexParamBuilder $indexParamBuilder, FieldsHelperInterface $fieldsHelper, FieldMapper $fieldParamsBuilder, LoggerInterface $logger, Client $client) {
     $this->indexParamBuilder = $indexParamBuilder;
     $this->queryParamBuilder = $queryParamBuilder;
     $this->resultParser = $resultParser;
     $this->client = $client;
     $this->fieldsHelper = $fieldsHelper;
     $this->logger = $logger;
-    $this->url = $url;
     $this->fieldParamsBuilder = $fieldParamsBuilder;
   }
 

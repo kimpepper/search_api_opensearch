@@ -75,9 +75,9 @@ class BackendClientFactory {
    * @param string $url
    *   The cluster URL.
    *
-   * @return \Drupal\opensearch\SearchAPI\BackendClient
+   * @return \Drupal\opensearch\SearchAPI\BackendClientInterface
    */
-  public function create(Client $client, string $url): BackendClient {
+  public function create(Client $client): BackendClientInterface {
     return new BackendClient(
       $this->queryParamBuilder,
       $this->resultParser,
@@ -85,8 +85,7 @@ class BackendClientFactory {
       $this->fieldsHelper,
       $this->fieldParamsBuilder,
       $this->logger,
-      $client,
-      $url
+      $client
     );
   }
 

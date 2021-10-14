@@ -15,6 +15,7 @@ use Drupal\opensearch\Connector\InvalidConnectorException;
 use Drupal\opensearch\Connector\OpenSearchConnectorInterface;
 use Drupal\opensearch\SearchAPI\BackendClient;
 use Drupal\opensearch\SearchAPI\BackendClientFactory;
+use Drupal\opensearch\SearchAPI\BackendClientInterface;
 use Drupal\search_api\Backend\BackendPluginBase;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Query\QueryInterface;
@@ -23,6 +24,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides an OpenSearch backend for Search API.
+ *
+ * @SearchApiBackend(
+ *   id = "opensearch",
+ *   label = @Translation("OpenSearch"),
+ *   description = @Translation("Provides an OpenSearch backend.")
+ * )
  */
 class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface {
 
@@ -236,12 +243,12 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
   /**
    * Gets the OpenSearch Search API client.
    *
-   * @return \Drupal\opensearch\SearchAPI\BackendClient
+   * @return \Drupal\opensearch\SearchAPI\BackendClientInterface
    *   The OpenSearch Search API client.
    */
-  public function getBackendClient(): BackendClient {
+  public function getBackendClient(): BackendClientInterface {
     if (!isset($this->backendClient)) {
-      $this->backendClient = $this->backendClientFactory->create($this->getClient(), $this->getConnector()->getUrl());
+      $this->backendClient = $this->backendClientFactory->create($this->getClient());
     }
     return $this->backendClient;
   }
@@ -296,14 +303,14 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
    * {@inheritdoc}
    */
   public function deleteItems(IndexInterface $index, array $item_ids) {
-    return $this->getBackendClient()->deleteItems($index, $item_ids);
+    $this->getBackendClient()->deleteItems($index, $item_ids);
   }
 
   /**
    * {@inheritdoc}
    */
   public function deleteAllIndexItems(IndexInterface $index, $datasource_id = NULL) {
-    $this->getBackendClient()->deleteAllIndexItems($index, $datasource_id);
+    $this->getBackendClient()->clearIndex($index, $datasource_id);
   }
 
   /**

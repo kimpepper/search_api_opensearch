@@ -26,10 +26,7 @@ class MoreLikeThisParamBuilder {
 
     // Transform input parameter "id" to "ids" if available.
     if (isset($mltOptions['id'])) {
-      $mltOptions['ids'] =
-        is_array($mltOptions['id']) ?
-          $mltOptions['id'] :
-          [$mltOptions['id']];
+      $mltOptions['ids'] = is_array($mltOptions['id']) ? $mltOptions['id'] : [$mltOptions['id']];
       unset($mltOptions['id']);
     }
 

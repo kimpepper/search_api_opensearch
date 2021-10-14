@@ -43,7 +43,7 @@ class QueryResultParser {
 
     // Set up the results array.
     $results = $query->getResults();
-    $results->setExtraData('elasticsearch_response', $response);
+    $results->setExtraData('opensearch_response', $response);
     $results->setResultCount($response['hits']['total']['value']);
     // Add each search result to the results array.
     if (!empty($response['hits']['hits'])) {
