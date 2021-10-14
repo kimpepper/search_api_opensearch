@@ -13,8 +13,7 @@ class MoreLikeThisParamBuilder {
    * Adjusts $body to have a more like this query.
    *
    * @param array $mltOptions
-   *   Array of query options. We're most interested here in the key of 'mlt',
-   *   which should contain the following keys:
+   *   An associative array of query options with the keys:
    *   - id: To be used as the like_text in the more_like_this query.
    *   - fields: Array of fields.
    *
@@ -58,7 +57,6 @@ class MoreLikeThisParamBuilder {
     $mltQuery['more_like_this']['min_doc_freq'] = 1;
     $mltQuery['more_like_this']['min_term_freq'] = 1;
 
-    //      $body['query']['bool']['must'][] = $mltQuery;
     return $mltQuery;
   }
 

@@ -29,12 +29,12 @@ class FieldMappingEvent extends Event {
    *
    * @param \Drupal\search_api\Item\FieldInterface $field
    *   The field.
-   * @param array $params
+   * @param array $param
    *   The mapping param.
    */
-  public function __construct(FieldInterface $field, array $params) {
+  public function __construct(FieldInterface $field, array $param) {
     $this->field = $field;
-    $this->param = $params;
+    $this->param = $param;
   }
 
   /**

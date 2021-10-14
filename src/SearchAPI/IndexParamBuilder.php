@@ -4,6 +4,7 @@ namespace Drupal\opensearch\SearchAPI;
 
 use Drupal\opensearch\Event\IndexParamsEvent;
 use Drupal\search_api\IndexInterface;
+use Drupal\search_api\Item\FieldInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -30,16 +31,14 @@ class IndexParamBuilder {
    *
    * @param \Drupal\search_api\IndexInterface $index
    *   The index.
-   * @param array $items
+   * @param \Drupal\search_api\Item\ItemInterface[] $items
    *   The items.
    *
    * @return array
    *   The index operation params.
    */
   public function buildIndexParams(IndexInterface $index, array $items): array {
-    $params = [
-      'index' => $index->id(),
-    ];
+    $params = [];
 
     foreach ($items as $id => $item) {
       $data = [
@@ -53,13 +52,13 @@ class IndexParamBuilder {
           $data[$field->getFieldIdentifier()] = $values;
         }
       }
-      $params['body'][] = ['index' => ['_id' => $id, '_type' => $index->id()]];
+      $params['body'][] = ['index' => ['_id' => $id, '_index' => $index->id()]];
       $params['body'][] = $data;
     }
 
-    // Allow modification of search params via an event.
+    // Allow modification of search params.
     $event = new IndexParamsEvent($index->id(), $params);
-    $event = $this->eventDispatcher->dispatch($event);
+    $this->eventDispatcher->dispatch($event);
     $params = $event->getParams();
 
     return $params;
@@ -71,7 +70,7 @@ class IndexParamBuilder {
    *
    * @return array
    */
-  public function buildFieldValues(\Drupal\search_api\Item\FieldInterface $field, string $field_type): array {
+  public function buildFieldValues(FieldInterface $field, string $field_type): array {
     $values = [];
     foreach ($field->getValues() as $value) {
       switch ($field_type) {

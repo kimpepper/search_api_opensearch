@@ -54,7 +54,7 @@ class FieldMapper {
 
     // Map index fields.
     foreach ($index->getFields() as $field_id => $field_data) {
-      $properties[$field_id] =$this->mapFieldProperty($field_data);
+      $properties[$field_id] = $this->mapFieldProperty($field_data);
     }
 
     $properties['_language'] = [
@@ -145,6 +145,7 @@ class FieldMapper {
         break;
     }
 
+    // Allow modification of field mapping.
     $event = new FieldMappingEvent($field, $param);
     $this->eventDispatcher->dispatch($event);
     $param = $event->getParam();
