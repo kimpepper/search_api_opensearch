@@ -69,7 +69,7 @@ class FieldMapper {
   /**
    * Helper function. Get the elasticsearch mapping for a field.
    *
-   * @param FieldInterface $field
+   * @param \Drupal\search_api\Item\FieldInterface $field
    *
    * @return array
    *   Array of settings.
@@ -87,8 +87,8 @@ class FieldMapper {
             "keyword" => [
               "type" => 'keyword',
               'ignore_above' => 256,
-            ]
-          ]
+            ],
+          ],
         ];
         break;
 

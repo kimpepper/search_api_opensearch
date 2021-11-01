@@ -2,6 +2,8 @@
 
 namespace Drupal\opensearch\SearchAPI;
 
+use Drupal\opensearch\SearchAPI\Query\QueryParamBuilder;
+use Drupal\opensearch\SearchAPI\Query\QueryResultParser;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Query\ResultSetInterface;
@@ -26,14 +28,14 @@ class BackendClient implements BackendClientInterface {
   /**
    * The query param builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\QueryParamBuilder
+   * @var \Drupal\opensearch\SearchAPI\Query\QueryParamBuilder
    */
   protected $queryParamBuilder;
 
   /**
    * The query result parser.
    *
-   * @var \Drupal\opensearch\SearchAPI\QueryResultParser
+   * @var \Drupal\opensearch\SearchAPI\Query\QueryResultParser
    */
   protected $resultParser;
 
@@ -66,14 +68,22 @@ class BackendClient implements BackendClientInterface {
   protected $logger;
 
   /**
-   * @param \Drupal\opensearch\SearchAPI\QueryParamBuilder $queryParamBuilder
-   * @param \Drupal\opensearch\SearchAPI\QueryResultParser $resultParser
+   * Constructs a new BackendClient.
+   *
+   * @param \Drupal\opensearch\SearchAPI\Query\QueryParamBuilder $queryParamBuilder
+   *   The query param builder.
+   * @param \Drupal\opensearch\SearchAPI\Query\QueryResultParser $resultParser
+   *   The query result parser.
    * @param \Drupal\opensearch\SearchAPI\IndexParamBuilder $indexParamBuilder
+   *   The index param builder.
    * @param \Drupal\search_api\Utility\FieldsHelperInterface $fieldsHelper
+   *   The fields helper.
    * @param \Drupal\opensearch\SearchAPI\FieldMapper $fieldParamsBuilder
+   *   THe field mapper.
    * @param \Psr\Log\LoggerInterface $logger
+   *   The logger.
    * @param \Elasticsearch\Client $client
-   * @param string $url
+   *   The OpenSearch client.
    */
   public function __construct(QueryParamBuilder $queryParamBuilder, QueryResultParser $resultParser, IndexParamBuilder $indexParamBuilder, FieldsHelperInterface $fieldsHelper, FieldMapper $fieldParamsBuilder, LoggerInterface $logger, Client $client) {
     $this->indexParamBuilder = $indexParamBuilder;

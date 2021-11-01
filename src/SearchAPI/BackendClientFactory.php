@@ -2,6 +2,8 @@
 
 namespace Drupal\opensearch\SearchAPI;
 
+use Drupal\opensearch\SearchAPI\Query\QueryParamBuilder;
+use Drupal\opensearch\SearchAPI\Query\QueryResultParser;
 use Drupal\search_api\Utility\FieldsHelperInterface;
 use Elasticsearch\Client;
 use Psr\Log\LoggerInterface;
@@ -18,14 +20,14 @@ class BackendClientFactory {
   /**
    * The query param builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\QueryParamBuilder
+   * @var \Drupal\opensearch\SearchAPI\Query\QueryParamBuilder
    */
   protected $queryParamBuilder;
 
   /**
    * The query result parser.
    *
-   * @var \Drupal\opensearch\SearchAPI\QueryResultParser
+   * @var \Drupal\opensearch\SearchAPI\Query\QueryResultParser
    */
   protected $resultParser;
 
@@ -51,8 +53,8 @@ class BackendClientFactory {
   protected $logger;
 
   /**
-   * @param \Drupal\opensearch\SearchAPI\QueryParamBuilder $queryParamBuilder
-   * @param \Drupal\opensearch\SearchAPI\QueryResultParser $resultParser
+   * @param \Drupal\opensearch\SearchAPI\Query\QueryParamBuilder $queryParamBuilder
+   * @param \Drupal\opensearch\SearchAPI\Query\QueryResultParser $resultParser
    * @param \Drupal\opensearch\SearchAPI\IndexParamBuilder $itemParamBuilder
    * @param \Drupal\search_api\Utility\FieldsHelperInterface $fieldsHelper
    * @param \Drupal\opensearch\SearchAPI\FieldMapper $fieldParamsBuilder
@@ -72,8 +74,6 @@ class BackendClientFactory {
    *
    * @param \Elasticsearch\Client $client
    *   The OpenSearch client.
-   * @param string $url
-   *   The cluster URL.
    *
    * @return \Drupal\opensearch\SearchAPI\BackendClientInterface
    */

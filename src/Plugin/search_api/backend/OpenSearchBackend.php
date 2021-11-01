@@ -2,7 +2,6 @@
 
 namespace Drupal\opensearch\Plugin\search_api\backend;
 
-use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
@@ -13,7 +12,6 @@ use Drupal\Core\Url;
 use Drupal\opensearch\Connector\ConnectorPluginManager;
 use Drupal\opensearch\Connector\InvalidConnectorException;
 use Drupal\opensearch\Connector\OpenSearchConnectorInterface;
-use Drupal\opensearch\SearchAPI\BackendClient;
 use Drupal\opensearch\SearchAPI\BackendClientFactory;
 use Drupal\opensearch\SearchAPI\BackendClientInterface;
 use Drupal\search_api\Backend\BackendPluginBase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\SearchAPI;
+namespace Drupal\opensearch\SearchAPI\Query;
 
 use Drupal\Component\Utility\Html;
 use Drupal\elasticsearch_connector\Event\PrepareSearchQueryEvent;
@@ -10,7 +10,7 @@ use Elasticsearch\Common\Exceptions\ElasticsearchException;
 /**
  * Provides a query options param builder.
  */
-class QueryOptionsParamBuilder {
+class QueryOptionsBuilder {
 
   /**
    * The fields helper.
@@ -27,6 +27,27 @@ class QueryOptionsParamBuilder {
   protected $logger;
 
   /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
+   */
+  protected $eventDispatcher;
+
+  /**
+   * The key flattener.
+   *
+   * @var \Drupal\opensearch\SearchAPI\KeyFlattener
+   */
+  protected $keyFlattener;
+
+  /**
+   * The sort builder.
+   *
+   * @var \Drupal\opensearch\SearchAPI\Query\SortBuilder
+   */
+  protected $sortBuilder;
+
+  /**
    * Helper function to return associative array with query options.
    *
    * @return array
@@ -38,7 +59,7 @@ class QueryOptionsParamBuilder {
    *   - sort: Sort options.
    *   - mlt: More like this search options.
    */
-  protected function getSearchQueryOptions(QueryInterface $query) {
+  public function getSearchQueryOptions(QueryInterface $query) {
     // Query options.
     $query_options = $query->getOptions();
 
@@ -89,10 +110,12 @@ class QueryOptionsParamBuilder {
       }
 
       // Query string.
-      $lucene = $this->flattenKeys($keys, $parse_mode, $index->getServerInstance()
-        ->getBackend()
-        ->getFuzziness());
-      $search_string = $lucene->__toString();
+      $lucene = $this->keyFlattener->flattenKeys(
+        $keys,
+        $parse_mode,
+        $index->getServerInstance()->getBackend()->getFuzziness()
+      );
+      $search_string = (string) $lucene;
 
       if (!empty($search_string)) {
         $query_search_string = ['query_string' => []];
@@ -104,11 +127,10 @@ class QueryOptionsParamBuilder {
     $sort = [];
     // Get the sort.
     try {
-      $sort = $this->getSortSearchQuery($query);
+      $sort = $this->sortBuilder->getSortSearchQuery($query);
     }
     catch (ElasticsearchException $e) {
-      watchdog_exception('Elasticsearch Search API', $e);
-      $this->messenger()->addError($e->getMessage());
+      watchdog_exception('opensearch', $e);
     }
 
     $languages = $query->getLanguages();
@@ -162,47 +184,5 @@ class QueryOptionsParamBuilder {
 
     return $elasticSearchQuery;
   }
-
-  /**
-   * Helper function that returns sort for query in search.
-   *
-   * @return array
-   *   Sort portion of the query.
-   */
-  protected function getSortSearchQuery(QueryInterface $query): array {
-    $index = $query->getIndex();
-    $index_fields = $index->getFields();
-    $sort = [];
-    $query_full_text_fields = $index->getFulltextFields();
-    foreach ($query->getSorts() as $field_id => $direction) {
-      $direction = mb_strtolower($direction);
-
-      if ($field_id === 'search_api_relevance') {
-        // Apply only on fulltext search.
-        $keys = $query->getKeys();
-        if (!empty($keys)) {
-          $sort['_score'] = $direction;
-        }
-      }
-      elseif ($field_id === 'search_api_id') {
-        $sort['id'] = $direction;
-      }
-      elseif (isset($index_fields[$field_id])) {
-        if (in_array($field_id, $query_full_text_fields)) {
-          // Set the field that has not been analyzed for sorting.
-          $sort[$field_id . '.keyword'] = $direction;
-        }
-        else {
-          $sort[$field_id] = $direction;
-        }
-      }
-      else {
-        $this->logger->warning(sprintf('Invalid sorting field: %s', $field_id));
-      }
-
-    }
-    return $sort;
-  }
-
 
 }

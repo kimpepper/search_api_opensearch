@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\SearchAPI;
+namespace Drupal\opensearch\SearchAPI\Query;
 
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Query\ResultSetInterface;

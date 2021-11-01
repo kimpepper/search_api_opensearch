@@ -1,15 +1,13 @@
 <?php
 
-namespace Drupal\Tests\opensearch\Unit\SearchAPI;
+namespace Drupal\Tests\opensearch\Unit\SearchAPI\Query;
 
-use Drupal\opensearch\SearchAPI\QueryResultParser;
+use Drupal\opensearch\SearchAPI\Query\QueryResultParser;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\Field;
 use Drupal\search_api\Item\Item;
-use Drupal\search_api\Query\Query;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Query\ResultSet;
-use Drupal\search_api\Utility\FieldsHelper;
 use Drupal\search_api\Utility\FieldsHelperInterface;
 use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
@@ -17,7 +15,7 @@ use Prophecy\Argument;
 /**
  * Tests the query result parser.
  *
- * @coversDefaultClass \Drupal\opensearch\SearchAPI\QueryResultParser
+ * @coversDefaultClass \Drupal\opensearch\SearchAPI\Query\QueryResultParser
  * @group opensearch
  */
 class QueryResultParserTest extends UnitTestCase {

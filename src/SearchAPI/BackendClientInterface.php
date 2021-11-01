@@ -47,7 +47,7 @@ interface BackendClientInterface {
    * @throws \Drupal\search_api\SearchApiException
    *   Thrown if an error occurred while adding the index.
    */
-  public function addIndex(\Drupal\search_api\IndexInterface $index): void;
+  public function addIndex(IndexInterface $index): void;
 
   /**
    * Notifies the server that an index attached to it has been changed.
@@ -98,4 +98,5 @@ interface BackendClientInterface {
    *   Thrown if an error occurred while trying to delete indexed items.
    */
   public function clearIndex(IndexInterface $index, string $datasource_id = NULL): void;
+
 }

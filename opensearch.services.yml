@@ -14,14 +14,14 @@ services:
   opensearch.more_like_this_param_builder:
     class: Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder
   opensearch.query_param_builder:
-    class: Drupal\opensearch\SearchAPI\QueryParamBuilder
+    class: Drupal\opensearch\SearchAPI\Query\QueryParamBuilder
     arguments:
       - '@search_api.fields_helper'
       - '@opensearch.more_like_this_param_builder'
       - '@event_dispatcher'
       - '@logger.channel.opensearch'
   opensearch.query_result_parser:
-    class: Drupal\opensearch\SearchAPI\QueryResultParser
+    class: Drupal\opensearch\SearchAPI\Query\QueryResultParser
     arguments: ['@search_api.fields_helper']
   opensearch.field_mapper:
     class: Drupal\opensearch\SearchAPI\FieldMapper

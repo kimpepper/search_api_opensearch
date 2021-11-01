@@ -32,7 +32,7 @@ interface OpenSearchConnectorInterface extends PluginFormInterface, Configurable
    * Gets the OpenSearch client.
    *
    * @return \Elasticsearch\Client
-   *  The OpenSearch client.
+   *   The OpenSearch client.
    */
   public function getClient(): Client;
 
