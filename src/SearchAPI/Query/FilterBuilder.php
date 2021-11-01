@@ -2,10 +2,10 @@
 
 namespace Drupal\opensearch\SearchAPI\Query;
 
-use Drupal\elasticsearch_connector\ElasticSearch\Parameters\Factory\FilterFactory;
 use Drupal\search_api\Query\Condition;
 use Drupal\search_api\Query\ConditionGroupInterface;
 use Drupal\search_api\SearchApiException;
+use Drupal\search_api\Utility\FieldsHelperInterface;
 
 /**
  * Provides a query filter builder.
@@ -18,6 +18,26 @@ class FilterBuilder {
    * @var \Drupal\search_api\Utility\FieldsHelperInterface
    */
   protected $fieldsHelper;
+
+  /**
+   * The filter term builder.
+   *
+   * @var \Drupal\opensearch\SearchAPI\Query\FilterTermBuilder
+   */
+  protected $filterTermBuilder;
+
+  /**
+   * Creates a new FilterBuilder.
+   *
+   * @param \Drupal\search_api\Utility\FieldsHelperInterface $fieldsHelper
+   *   The fields helper.
+   * @param \Drupal\opensearch\SearchAPI\Query\FilterTermBuilder $filterTermBuilder
+   *   The filter term builder.
+   */
+  public function __construct(FieldsHelperInterface $fieldsHelper, FilterTermBuilder $filterTermBuilder) {
+    $this->fieldsHelper = $fieldsHelper;
+    $this->filterTermBuilder = $filterTermBuilder;
+  }
 
   /**
    * Recursively parse Search API condition group.
@@ -74,8 +94,8 @@ class FilterBuilder {
             }
           }
 
-          // Check field.
-          $filter = FilterFactory::filterFromCondition($condition);
+          // Builder filter term.
+          $filter = $this->filterTermBuilder->buildFilterTerm($condition);
 
           if (!empty($filter)) {
             $filters[] = $filter;
