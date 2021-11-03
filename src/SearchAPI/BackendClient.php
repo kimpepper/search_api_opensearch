@@ -182,7 +182,7 @@ class BackendClient implements BackendClientInterface {
     }
 
     // Build Elasticsearch query.
-    $params = $this->queryParamBuilder->build($query);
+    $params = $this->queryParamBuilder->buildQueryParams($query);
 
     try {
 

@@ -4,7 +4,10 @@ namespace Drupal\opensearch\SearchAPI\Query;
 
 use Drupal\search_api\Query\QueryInterface;
 
-class SortBuilder {
+/**
+ * Provides a query sort builder.
+ */
+class QuerySortBuilder {
 
   /**
    * The logger.

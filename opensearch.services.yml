@@ -6,26 +6,42 @@ services:
 
   logger.channel.opensearch:
     parent: logger.channel_base
-    arguments: ['opensearch']
+    arguments: [ 'opensearch' ]
 
   opensearch.index_param_builder:
     class: Drupal\opensearch\SearchAPI\IndexParamBuilder
-    arguments: ['@event_dispatcher']
+    arguments: [ '@event_dispatcher' ]
+  opensearch.query_sort_builder:
+    class: Drupal\opensearch\SearchAPI\Query\QuerySortBuilder
+    arguments: [ '@logger.channel.opensearch' ]
+  opensearch.query_filter_term_builder:
+    class: Drupal\opensearch\SearchAPI\Query\FilterTermBuilder
+  opensearch.query_filter_builder:
+    class: Drupal\opensearch\SearchAPI\Query\FilterBuilder
+    arguments: [ '@search_api.fields_helper', '@opensearch.query_filter_term_builder' ]
+  opensearch.query_string_builder:
+    class: Drupal\opensearch\SearchAPI\Query\QueryStringBuilder
+  opensearch.search_param_builder:
+    class: Drupal\opensearch\SearchAPI\Query\SearchParamBuilder
+    arguments: [ '@search_api.fields_helper', '@opensearch.query_string_builder' ]
   opensearch.more_like_this_param_builder:
     class: Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder
   opensearch.query_param_builder:
     class: Drupal\opensearch\SearchAPI\Query\QueryParamBuilder
     arguments:
       - '@search_api.fields_helper'
+      - '@opensearch.query_sort_builder'
+      - '@opensearch.query_filter_builder'
+      - '@opensearch.search_param_builder'
       - '@opensearch.more_like_this_param_builder'
       - '@event_dispatcher'
       - '@logger.channel.opensearch'
   opensearch.query_result_parser:
     class: Drupal\opensearch\SearchAPI\Query\QueryResultParser
-    arguments: ['@search_api.fields_helper']
+    arguments: [ '@search_api.fields_helper' ]
   opensearch.field_mapper:
     class: Drupal\opensearch\SearchAPI\FieldMapper
-    arguments: ['@event_dispatcher']
+    arguments: [ '@event_dispatcher' ]
 
   opensearch.backend_client_factory:
     class: Drupal\opensearch\SearchAPI\BackendClientFactory

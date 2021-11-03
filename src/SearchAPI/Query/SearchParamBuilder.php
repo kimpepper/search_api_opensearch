@@ -3,6 +3,7 @@
 namespace Drupal\opensearch\SearchAPI\Query;
 
 use Drupal\search_api\Query\QueryInterface;
+use Drupal\search_api\Utility\FieldsHelperInterface;
 
 /**
  * Provides a search param builder.
@@ -14,7 +15,7 @@ class SearchParamBuilder {
    *
    * @var \Drupal\opensearch\SearchAPI\Query\QueryStringBuilder
    */
-  protected $keyFlattener;
+  protected $queryStringBuilder;
 
   /**
    * The fields helper.
@@ -22,6 +23,19 @@ class SearchParamBuilder {
    * @var \Drupal\search_api\Utility\FieldsHelperInterface
    */
   protected $fieldsHelper;
+
+  /**
+   * Creates a new search param builder.
+   *
+   * @param \Drupal\search_api\Utility\FieldsHelperInterface $fieldsHelper
+   *   The query string builder.
+   * @param \Drupal\opensearch\SearchAPI\Query\QueryStringBuilder $queryStringBuilder
+   *   The fields helper.
+   */
+  public function __construct(FieldsHelperInterface $fieldsHelper, QueryStringBuilder $queryStringBuilder) {
+    $this->queryStringBuilder = $queryStringBuilder;
+    $this->fieldsHelper = $fieldsHelper;
+  }
 
   /**
    * Builds the search params for the query.
@@ -68,7 +82,7 @@ class SearchParamBuilder {
     }
 
     // Query string.
-    $search_string = $this->keyFlattener->buildQueryString(
+    $search_string = $this->queryStringBuilder->buildQueryString(
       $keys,
       $index->getServerInstance()->getBackend()->getFuzziness()
     );

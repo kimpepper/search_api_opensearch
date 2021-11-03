@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Provides a param builder for search operations.
+ * Provides a query param builder for search operations.
  */
 class QueryParamBuilder {
 
@@ -54,13 +54,6 @@ class QueryParamBuilder {
   protected $mltParamBuilder;
 
   /**
-   * The query options builder.
-   *
-   * @var \Drupal\opensearch\SearchAPI\QueryOptionsBuilder
-   */
-  protected $queryOptionsBuilder;
-
-  /**
    * The search param builder.
    *
    * @var \Drupal\opensearch\SearchAPI\Query\SearchParamBuilder
@@ -70,7 +63,7 @@ class QueryParamBuilder {
   /**
    * The sort builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\Query\SortBuilder
+   * @var \Drupal\opensearch\SearchAPI\Query\QuerySortBuilder
    */
   protected $sortBuilder;
 
@@ -86,6 +79,12 @@ class QueryParamBuilder {
    *
    * @param \Drupal\search_api\Utility\FieldsHelperInterface $fieldsHelper
    *   The fields helper.
+   * @param \Drupal\opensearch\SearchAPI\Query\QuerySortBuilder $sortBuilder
+   *   The sort builder.
+   * @param \Drupal\opensearch\SearchAPI\Query\FilterBuilder $filterBuilder
+   *   The filter builder.
+   * @param \Drupal\opensearch\SearchAPI\Query\SearchParamBuilder $searchParamBuilder
+   *   The search param builder.
    * @param \Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder $mltParamBuilder
    *   The More Like This param builder.
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $eventDispatcher
@@ -93,8 +92,11 @@ class QueryParamBuilder {
    * @param \Psr\Log\LoggerInterface $logger
    *   The logger.
    */
-  public function __construct(FieldsHelperInterface $fieldsHelper, MoreLikeThisParamBuilder $mltParamBuilder, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger) {
+  public function __construct(FieldsHelperInterface $fieldsHelper, QuerySortBuilder $sortBuilder, FilterBuilder $filterBuilder, SearchParamBuilder $searchParamBuilder, MoreLikeThisParamBuilder $mltParamBuilder, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger) {
     $this->fieldsHelper = $fieldsHelper;
+    $this->sortBuilder = $sortBuilder;
+    $this->filterBuilder = $filterBuilder;
+    $this->searchParamBuilder = $searchParamBuilder;
     $this->mltParamBuilder = $mltParamBuilder;
     $this->eventDispatcher = $eventDispatcher;
     $this->logger = $logger;
@@ -106,11 +108,8 @@ class QueryParamBuilder {
    * @return array
    *   Array or parameters to send along to the Elasticsearch _search endpoint.
    */
-  public function build(QueryInterface $query): array {
-    // Query options.
+  public function buildQueryParams(QueryInterface $query): array {
     $index = $query->getIndex();
-    $options = $query->getOptions();
-
     $params = [
       'index' => $index->id(),
     ];
@@ -118,8 +117,8 @@ class QueryParamBuilder {
     $body = [];
 
     // Set the size and from parameters.
-    $body['from'] = $options['query_offset'] ?? self::DEFAULT_OFFSET;
-    $body['size'] = $options['query_limit'] ?? self::DEFAULT_LIMIT;
+    $body['from'] = $query->getOption('query_offset', self::DEFAULT_OFFSET);
+    $body['size'] = $query->getOption('query_limit', self::DEFAULT_LIMIT);
 
     // Sort.
     $sort = $this->sortBuilder->getSortSearchQuery($query);
@@ -162,7 +161,7 @@ class QueryParamBuilder {
       $query_body['match_all'] = [];
     }
 
-    $exclude_source_fields = $query->getOption('elasticsearch_connector_exclude_source_fields', []);
+    $exclude_source_fields = $query->getOption('opensearch_exclude_source_fields', []);
 
     if (!empty($exclude_source_fields)) {
       $body['_source'] = [
@@ -171,8 +170,8 @@ class QueryParamBuilder {
     }
 
     // More Like This.
-    if (!empty($options['search_api_mlt'])) {
-      $body['query']['bool']['must'][] = $this->mltParamBuilder->buildMoreLikeThisQuery($options['search_api_mlt']);
+    if (!empty($query->getOption('search_api_mlt'))) {
+      $body['query']['bool']['must'][] = $this->mltParamBuilder->buildMoreLikeThisQuery($query->getOption('search_api_mlt'));
     }
 
     $params['body'] = $body;

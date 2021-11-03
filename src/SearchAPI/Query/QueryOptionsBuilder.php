@@ -43,7 +43,7 @@ class QueryOptionsBuilder {
   /**
    * The sort builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\Query\SortBuilder
+   * @var \Drupal\opensearch\SearchAPI\Query\QuerySortBuilder
    */
   protected $sortBuilder;
 
