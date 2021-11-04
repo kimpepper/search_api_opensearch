@@ -2,36 +2,93 @@
 
 namespace Drupal\Tests\opensearch\Unit\SearchAPI\Query;
 
-use Drupal\opensearch\SearchAPI\Query\QueryStringBuilder;
-use Drupal\search_api\ParseMode\ParseModeInterface;
+use Drupal\opensearch\Plugin\search_api\backend\OpenSearchBackend;
+use Drupal\opensearch\SearchAPI\Query\SearchParamBuilder;
+use Drupal\search_api\Entity\Server;
+use Drupal\search_api\IndexInterface;
+use Drupal\search_api\Item\Field;
+use Drupal\search_api\Query\QueryInterface;
 use Drupal\Tests\UnitTestCase;
 use MakinaCorpus\Lucene\Query;
 
 /**
- * Tests the key flattener.
+ * Tests the search param builder.
  *
- * @coversDefaultClass \Drupal\opensearch\SearchAPI\Query\QueryStringBuilder
+ * @coversDefaultClass \Drupal\opensearch\SearchAPI\Query\SearchParamBuilder
  * @group opensearch
  */
-class QueryStringBuilderTest extends UnitTestCase {
+class SearchParamBuilderTest extends UnitTestCase {
 
   /**
-   * @covers ::buildQueryString
-   * @dataProvider buildSearchQueryDataProvider
+   * @covers ::buildSearchParams
    */
-  public function testBuildSearchQuery($keys, $fuzziness, $expected) {
+  public function testBuildSearchParams() {
 
-    $parseMode = $this->prophesize(ParseModeInterface::class);
-    $queryBuilder = new QueryStringBuilder();
+    $backend = $this->prophesize(OpenSearchBackend::class);
+    $backend->getFuzziness()
+      ->willReturn('auto');
 
-    $output = $queryBuilder->buildQueryString($keys, $parseMode->reveal(), $fuzziness);
+    $server = $this->prophesize(Server::class);
+    $server->getBackend()
+      ->willReturn($backend->reveal());
+
+    $indexId = "foo";
+    $index = $this->prophesize(IndexInterface::class);
+    $index->id()
+      ->willReturn($indexId);
+    $index->getFulltextFields()
+      ->willReturn(['foo', 'bar', 'baz']);
+    $index->getServerInstance()
+      ->willReturn($server->reveal());
+
+    $builder = new SearchParamBuilder();
+
+    $query = $this->createMock(QueryInterface::class);
+    $query->expects($this->once())
+      ->method('getIndex')
+      ->willReturn($index->reveal());
+    $query->expects($this->once())
+      ->method('getKeys')
+      ->willReturn(['bar']);
+    $query->expects($this->once())
+      ->method('getFulltextFields')
+      ->willReturn(['foo']);
+
+    $field1 = $this->prophesize(Field::class);
+    $field1->getFieldIdentifier()
+      ->willReturn('foo');
+    $field1->getBoost()
+      ->willReturn(NULL);
+
+    $indexFields = ['foo' => $field1->reveal()];
+
+    $searchParams = $builder->buildSearchParams($query, $indexFields);
+
+    $expected = [
+      'query' => 'bar~',
+      'fields' => ['foo^'],
+    ];
+
+    $this->assertEquals($expected, $searchParams);
+
+  }
+
+  /**
+   * @covers ::buildSearchString
+   * @dataProvider buildSearchStringDataProvider
+   */
+  public function testBuildSearchString($keys, $fuzziness, $expected) {
+
+    $searchStringBuilder = new SearchParamBuilder();
+
+    $output = $searchStringBuilder->buildSearchString($keys, $fuzziness);
     $this->assertEquals($expected, (string) $output);
   }
 
   /**
    * @return array
    */
-  public function buildSearchQueryDataProvider(): array {
+  public function buildSearchStringDataProvider(): array {
     return [
       'normal keywords' => [
         'keys' => [

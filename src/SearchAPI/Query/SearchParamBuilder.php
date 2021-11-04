@@ -3,7 +3,8 @@
 namespace Drupal\opensearch\SearchAPI\Query;
 
 use Drupal\search_api\Query\QueryInterface;
-use Drupal\search_api\Utility\FieldsHelperInterface;
+use MakinaCorpus\Lucene\Query;
+use MakinaCorpus\Lucene\TermQuery;
 
 /**
  * Provides a search param builder.
@@ -11,37 +12,10 @@ use Drupal\search_api\Utility\FieldsHelperInterface;
 class SearchParamBuilder {
 
   /**
-   * The search key flattener.
-   *
-   * @var \Drupal\opensearch\SearchAPI\Query\QueryStringBuilder
-   */
-  protected $queryStringBuilder;
-
-  /**
-   * The fields helper.
-   *
-   * @var \Drupal\search_api\Utility\FieldsHelperInterface
-   */
-  protected $fieldsHelper;
-
-  /**
-   * Creates a new search param builder.
-   *
-   * @param \Drupal\search_api\Utility\FieldsHelperInterface $fieldsHelper
-   *   The query string builder.
-   * @param \Drupal\opensearch\SearchAPI\Query\QueryStringBuilder $queryStringBuilder
-   *   The fields helper.
-   */
-  public function __construct(FieldsHelperInterface $fieldsHelper, QueryStringBuilder $queryStringBuilder) {
-    $this->queryStringBuilder = $queryStringBuilder;
-    $this->fieldsHelper = $fieldsHelper;
-  }
-
-  /**
    * Builds the search params for the query.
    *
    * @param \Drupal\search_api\Query\QueryInterface $query
-   * @param \Drupal\search_api\Item\FieldInterface[] $index_fields
+   * @param \Drupal\search_api\Item\FieldInterface[] $indexFields
    *
    * @return array
    *   An associative array with keys:
@@ -51,7 +25,7 @@ class SearchParamBuilder {
    * @throws \Drupal\search_api\SearchApiException
    *   Thrown if there is an underlying Search API error.
    */
-  public function buildSearchParams(QueryInterface $query, array $index_fields): array {
+  public function buildSearchParams(QueryInterface $query, array $indexFields): array {
     $index = $query->getIndex();
     // Full text search.
     $keys = $query->getKeys();
@@ -65,37 +39,85 @@ class SearchParamBuilder {
       $keys = [$keys];
     }
 
-    // Full text fields in which to perform the search.
-    $query_full_text_fields = $query->getFulltextFields();
-    if ($query_full_text_fields) {
+    // Get the fulltext fields to search on.
+    $fulltextFieldIds = $query->getFulltextFields();
+    if (!empty($fulltextFieldIds)) {
       // Make sure the fields exists within the indexed fields.
-      $query_full_text_fields = array_intersect($index->getFulltextFields(), $query_full_text_fields);
+      $fulltextFieldIds = array_intersect($index->getFulltextFields(), $fulltextFieldIds);
     }
     else {
-      $query_full_text_fields = $index->getFulltextFields();
+      // Default to all index fulltext fields.
+      $fulltextFieldIds = $index->getFulltextFields();
     }
 
-    $query_fields = [];
-    foreach ($query_full_text_fields as $full_text_field_name) {
-      $full_text_field = $index_fields[$full_text_field_name];
-      $query_fields[] = $full_text_field->getFieldIdentifier() . '^' . $full_text_field->getBoost();
+    $queryFields = [];
+    foreach ($fulltextFieldIds as $fieldId) {
+      $field = $indexFields[$fieldId];
+      $queryFields[] = $field->getFieldIdentifier() . '^' . $field->getBoost();
     }
 
     // Query string.
-    $search_string = $this->queryStringBuilder->buildQueryString(
-      $keys,
-      $index->getServerInstance()->getBackend()->getFuzziness()
+    $searchString = $this->buildSearchString($keys, $index->getServerInstance()
+      ->getBackend()
+      ->getFuzziness()
     );
 
     $params = [];
-    if (!empty($search_string)) {
-      $params['query'] = $search_string;
-      $params['fields'] = $query_fields;
-      $params['index_fields'] = $index_fields;
+    if (!empty($searchString)) {
+      $params['query'] = $searchString->__toString();
+      $params['fields'] = $queryFields;
     }
 
     return $params;
 
+  }
+
+  /**
+   * Builds the search string.
+   *
+   * @param array $keys
+   *   Search keys, in the format described by
+   *   \Drupal\search_api\ParseMode\ParseModeInterface::parseInput().
+   * @param string|null $fuzziness
+   *   (optional) The fuzziness. Defaults to "auto".
+   *
+   * @return \MakinaCorpus\Lucene\Query
+   *   The lucene query.
+   */
+  public function buildSearchString(array $keys, ?string $fuzziness = "auto"): Query {
+    $conjunction = $keys['#conjunction'] ?? Query::OP_OR;
+    $negation = !empty($keys['#negation']);
+
+    // Filter out top level properties beginning with '#'.
+    $keys = array_filter($keys, function (string $key) {
+      return $key[0] !== '#';
+    }, ARRAY_FILTER_USE_KEY);
+
+    // Create a CollectionQuery with the above values.
+    $query = (new Query())->setOperator($conjunction);
+    if ($negation) {
+      $query->setExclusion(Query::OP_PROHIBIT);
+    }
+
+    // Add a TermQuery for each key, recurse on arrays.
+    foreach ($keys as $name => $key) {
+      $termQuery = NULL;
+
+      if (is_array($key)) {
+        $termQuery = $this->buildSearchString($key, $fuzziness);
+      }
+      elseif (is_string($key)) {
+        $termQuery = (new TermQuery())->setValue($key);
+        if (!empty($fuzziness)) {
+          $termQuery->setFuzzyness($fuzziness);
+        }
+      }
+
+      if (!empty($termQuery)) {
+        $query->add($termQuery);
+      }
+    }
+    return $query;
   }
 
 }

@@ -5,39 +5,11 @@ namespace Drupal\opensearch\SearchAPI\Query;
 use Drupal\search_api\Query\Condition;
 use Drupal\search_api\Query\ConditionGroupInterface;
 use Drupal\search_api\SearchApiException;
-use Drupal\search_api\Utility\FieldsHelperInterface;
 
 /**
  * Provides a query filter builder.
  */
 class FilterBuilder {
-
-  /**
-   * The fields helper.
-   *
-   * @var \Drupal\search_api\Utility\FieldsHelperInterface
-   */
-  protected $fieldsHelper;
-
-  /**
-   * The filter term builder.
-   *
-   * @var \Drupal\opensearch\SearchAPI\Query\FilterTermBuilder
-   */
-  protected $filterTermBuilder;
-
-  /**
-   * Creates a new FilterBuilder.
-   *
-   * @param \Drupal\search_api\Utility\FieldsHelperInterface $fieldsHelper
-   *   The fields helper.
-   * @param \Drupal\opensearch\SearchAPI\Query\FilterTermBuilder $filterTermBuilder
-   *   The filter term builder.
-   */
-  public function __construct(FieldsHelperInterface $fieldsHelper, FilterTermBuilder $filterTermBuilder) {
-    $this->fieldsHelper = $fieldsHelper;
-    $this->filterTermBuilder = $filterTermBuilder;
-  }
 
   /**
    * Recursively parse Search API condition group.
@@ -95,7 +67,7 @@ class FilterBuilder {
           }
 
           // Builder filter term.
-          $filter = $this->filterTermBuilder->buildFilterTerm($condition);
+          $filter = $this->buildFilterTerm($condition);
 
           if (!empty($filter)) {
             $filters[] = $filter;
@@ -114,17 +86,121 @@ class FilterBuilder {
         }
       }
 
-      $filters = $this->setFiltersConjunction($filters, $conjunction);
+      $filters = $this->wrapWithConjunction($filters, $conjunction);
     }
 
     return $filters;
   }
 
   /**
-   * Helper function to set filters conjunction.
+   * Build a filter term from a Search API condition.
+   *
+   * @param \Drupal\search_api\Query\Condition $condition
+   *   The condition.
+   *
+   * @return array
+   *   The filter term array.
+   *
+   * @throws \Exception
+   */
+  public function buildFilterTerm(Condition $condition) {
+    // Handles "empty", "not empty" operators.
+    if (is_null($condition->getValue())) {
+      return match ($condition->getOperator()) {
+        '<>' => ['exists' => ['field' => $condition->getField()]],
+        '=' => ['bool' => ['must_not' => ['exists' => ['field' => $condition->getField()]]]],
+        default => throw new SearchApiException(sprintf('Invalid condition for field %s', $condition->getField())),
+      };
+    }
+
+    // Normal filters.
+    return match ($condition->getOperator()) {
+      '=' => [
+        'term' => [$condition->getField() => $condition->getValue()],
+      ],
+      'IN' => [
+        'terms' => [$condition->getField() => array_values($condition->getValue())],
+      ],
+      'NOT IN' => [
+        'bool' => ['must_not' => ['terms' => [$condition->getField() => array_values($condition->getValue())]]],
+      ],
+      '<>' => [
+        'bool' => ['must_not' => ['term' => [$condition->getField() => $condition->getValue()]]],
+      ],
+      '>' => [
+        'range' => [
+          $condition->getField() => [
+            'from' => $condition->getValue(),
+            'to' => NULL,
+            'include_lower' => FALSE,
+            'include_upper' => FALSE,
+          ],
+        ],
+      ],
+      '>=' => [
+        'range' => [
+          $condition->getField() => [
+            'from' => $condition->getValue(),
+            'to' => NULL,
+            'include_lower' => TRUE,
+            'include_upper' => FALSE,
+          ],
+        ],
+      ],
+      '<' => [
+        'range' => [
+          $condition->getField() => [
+            'from' => NULL,
+            'to' => $condition->getValue(),
+            'include_lower' => FALSE,
+            'include_upper' => FALSE,
+          ],
+        ],
+      ],
+      '<=' => [
+        'range' => [
+          $condition->getField() => [
+            'from' => NULL,
+            'to' => $condition->getValue(),
+            'include_lower' => FALSE,
+            'include_upper' => TRUE,
+          ],
+        ],
+      ],
+      'BETWEEN' => [
+        'range' => [
+          $condition->getField() => [
+            'from' => (!empty($condition->getValue()[0])) ? $condition->getValue()[0] : NULL,
+            'to' => (!empty($condition->getValue()[1])) ? $condition->getValue()[1] : NULL,
+            'include_lower' => FALSE,
+            'include_upper' => FALSE,
+          ],
+        ],
+      ],
+      'NOT BETWEEN' => [
+        'bool' => [
+          'must_not' => [
+            'range' => [
+              $condition->getField() => [
+                'from' => (!empty($condition->getValue()[0])) ? $condition->getValue()[0] : NULL,
+                'to' => (!empty($condition->getValue()[1])) ? $condition->getValue()[1] : NULL,
+                'include_lower' => FALSE,
+                'include_upper' => FALSE,
+              ],
+            ],
+          ],
+        ],
+      ],
+      default => throw new SearchApiException(sprintf('Undefined operator "%s" for field "%s" in filter condition.', $condition->getOperator(), $condition->getField())),
+    };
+
+  }
+
+  /**
+   * Wraps filters with the conjunction.
    *
    * @param array $filters
-   *   Array of filter parameters to be passed along to Elasticsearch.
+   *   Array of filter parameters.
    * @param string $conjunction
    *   The conjunction used by the corresponding Search API condition group –
    *   either 'AND' or 'OR'.
@@ -133,10 +209,10 @@ class FilterBuilder {
    *   Returns the passed $filters array wrapped in an array keyed by 'should'
    *   or 'must', as appropriate, based on the given conjunction.
    *
-   * @throws \Exception
-   *   In case of an invalid $conjunction.
+   * @throws \Drupal\search_api\SearchApiException
+   *   Thrown if there is an invalid conjunction.
    */
-  protected function setFiltersConjunction(array &$filters, string $conjunction) {
+  protected function wrapWithConjunction(array $filters, string $conjunction) {
     $f = match ($conjunction) {
       "OR" => ['should' => $filters],
       "AND" => ['must' => $filters],

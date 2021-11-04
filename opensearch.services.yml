@@ -14,16 +14,10 @@ services:
   opensearch.query_sort_builder:
     class: Drupal\opensearch\SearchAPI\Query\QuerySortBuilder
     arguments: [ '@logger.channel.opensearch' ]
-  opensearch.query_filter_term_builder:
-    class: Drupal\opensearch\SearchAPI\Query\FilterTermBuilder
   opensearch.query_filter_builder:
     class: Drupal\opensearch\SearchAPI\Query\FilterBuilder
-    arguments: [ '@search_api.fields_helper', '@opensearch.query_filter_term_builder' ]
-  opensearch.query_string_builder:
-    class: Drupal\opensearch\SearchAPI\Query\QueryStringBuilder
   opensearch.search_param_builder:
     class: Drupal\opensearch\SearchAPI\Query\SearchParamBuilder
-    arguments: [ '@search_api.fields_helper', '@opensearch.query_string_builder' ]
   opensearch.more_like_this_param_builder:
     class: Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder
   opensearch.query_param_builder:

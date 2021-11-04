@@ -107,6 +107,9 @@ class QueryParamBuilder {
    *
    * @return array
    *   Array or parameters to send along to the Elasticsearch _search endpoint.
+   *
+   * @throws \Drupal\search_api\SearchApiException
+   *   Thrown if an error occurs building query params.
    */
   public function buildQueryParams(QueryInterface $query): array {
     $index = $query->getIndex();
@@ -132,16 +135,16 @@ class QueryParamBuilder {
     $filters = $this->filterBuilder->buildFilters($query->getConditionGroup(), $index_fields);
 
     // Build the query.
-    $searchString = $this->searchParamBuilder->buildSearchParams($query, $index_fields);
-    if (!empty($searchString) && !empty($filters)) {
-      $body['query']['bool']['must'] = $searchString;
+    $searchParams = $this->searchParamBuilder->buildSearchParams($query, $index_fields);
+    if (!empty($searchParams) && !empty($filters)) {
+      $body['query']['bool']['must'] = $searchParams;
       $body['query']['bool']['filter'] = $filters;
     }
-    elseif (!empty($searchString)) {
+    elseif (!empty($searchParams)) {
       if (empty($body['query'])) {
         $body['query'] = [];
       }
-      $body['query'] += $searchString;
+      $body['query'] += $searchParams;
     }
     elseif (!empty($filters)) {
       $body['query'] = $filters;

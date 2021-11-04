@@ -207,6 +207,16 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
   }
 
   /**
+   * Get the configured fuzziness value.
+   *
+   * @return string
+   *   The configured fuzziness value.
+   */
+  public function getFuzziness(): string {
+    return $this->configuration['fuzziness'];
+  }
+
+  /**
    * Gets the OpenSearch connector.
    *
    * @return \Drupal\opensearch\Connector\OpenSearchConnectorInterface
