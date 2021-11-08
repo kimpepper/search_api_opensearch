@@ -12,7 +12,7 @@ use Elasticsearch\ClientBuilder;
 /**
  * Provides a standard OpenSearch connector.
  *
- * @OpenSearch(
+ * @OpenSearchConnector(
  *   id = "standard",
  *   label = @Translation("Standard"),
  *   description = @Translation("A standard connector usable for local
@@ -93,7 +93,7 @@ class StandardConnector extends PluginBase implements OpenSearchConnectorInterfa
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $url = $form_state['values']['url'];
+    $url = $form_state->getValue('url');
     if (!UrlHelper::isValid($url)) {
       $form_state->setErrorByName('url', $this->t("Invalid URL"));
     }

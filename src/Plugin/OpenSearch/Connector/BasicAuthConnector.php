@@ -9,7 +9,7 @@ use Elasticsearch\ClientBuilder;
 /**
  * Provides an OpenSearch connector with basic auth.
  *
- * @OpenSearch(
+ * @OpenSearchConnector(
  *   id = "basicauth",
  *   label = @Translation("Basic Auth"),
  *   description = @Translation("An OpenSearch connector with Basic authentication.")

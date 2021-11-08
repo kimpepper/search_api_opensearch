@@ -57,15 +57,15 @@ class SearchParamBuilder {
     }
 
     // Query string.
-    $searchString = $this->buildSearchString($keys, $index->getServerInstance()
+    $luceneQuery = $this->buildSearchString($keys, $index->getServerInstance()
       ->getBackend()
       ->getFuzziness()
     );
 
     $params = [];
-    if (!empty($searchString)) {
-      $params['query'] = $searchString->__toString();
-      $params['fields'] = $queryFields;
+    if (!$luceneQuery->isEmpty()) {
+      $params['query_string']['query'] = (string) $luceneQuery;
+      $params['query_string']['fields'] = $queryFields;
     }
 
     return $params;

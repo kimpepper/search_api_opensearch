@@ -34,6 +34,13 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
   use PluginDependencyTrait;
 
   /**
+   * Auto fuzziness setting.
+   *
+   * @see https://opensearch.org/docs/latest/opensearch/query-dsl/full-text/#options
+   */
+  const FUZZINESS_AUTO = 'auto';
+
+  /**
    * The client factory.
    *
    * @var \Drupal\opensearch\Connector\ConnectorPluginManager
@@ -94,6 +101,7 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
     return [
       'connector' => NULL,
       'connector_config' => [],
+      'fuzziness' => self::FUZZINESS_AUTO,
     ];
   }
 
@@ -101,6 +109,7 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
+
     $options = $this->getConnectorOptions();
     $form['connector'] = [
       '#type' => 'radios',
@@ -109,9 +118,34 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
       '#options' => $options,
       '#default_value' => $this->configuration['connector'],
       '#required' => TRUE,
+     '#ajax' => [
+            'callback' => [get_class($this), 'buildAjaxConnectorConfigForm'],
+            'wrapper' => 'opensearch-connector-config-form',
+            'method' => 'replace',
+            'effect' => 'fade',
+          ],
     ];
 
     $this->buildConnectorConfigForm($form, $form_state);
+
+    $form['advanced'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Advanced'),
+    ];
+
+    $fuzzinessOptions = [
+      '' => $this->t('- Disabled -'),
+      self::FUZZINESS_AUTO => self::FUZZINESS_AUTO,
+    ];
+    $fuzzinessOptions += array_combine(range(0, 5), range(0, 5));
+    $form['advanced']['fuzziness'] = [
+      '#type' => 'select',
+      '#title' => t('Fuzziness'),
+      '#required' => TRUE,
+      '#options' => $fuzzinessOptions,
+      '#default_value' => $this->configuration['fuzziness'],
+      '#description' => $this->t('Some queries and APIs support parameters to allow inexact fuzzy matching, using the fuzziness parameter. See <a href="https://opensearch.org/docs/latest/opensearch/query-dsl/full-text/#options">Fuzziness</a> for more information.'),
+    ];
 
     return $form;
   }
@@ -132,24 +166,39 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
     $connector_id = $this->configuration['connector'];
     if (isset($connector_id)) {
       $connector = $this->connectorPluginManager->createInstance($connector_id, $this->configuration['connector_config']);
-      assert($connector instanceof OpenSearchConnectorInterface);
-      $form_state->set('connector', $connector_id);
-      if ($form_state->isRebuilding()) {
-        $this->messenger()
-          ->addWarning($this->t('Please configure the selected OpenSearch connector.'));
-      }
-      // Attach the OpenSearch connector plugin configuration form.
-      $connector_form_state = SubformState::createForSubform($form['connector_config'], $form, $form_state);
-      $form['connector_config'] = $connector->buildConfigurationForm($form['connector_config'], $connector_form_state);
+      if ($connector instanceof PluginFormInterface) {
+        $form_state->set('connector', $connector_id);
+        if ($form_state->isRebuilding()) {
+          $this->messenger()
+            ->addWarning($this->t('Please configure the selected OpenSearch connector.'));
+        }
+        // Attach the OpenSearch connector plugin configuration form.
+        $connector_form_state = SubformState::createForSubform($form['connector_config'], $form, $form_state);
+        $form['connector_config'] = $connector->buildConfigurationForm($form['connector_config'], $connector_form_state);
 
-      // Modify the backend plugin configuration container element.
-      $form['connector_config']['#type'] = 'details';
-      $form['connector_config']['#title'] = $this->t('Configure %plugin OpenSearch connector', ['%plugin' => $connector->getLabel()]);
-      $form['connector_config']['#description'] = $connector->getDescription();
-      $form['connector_config']['#open'] = TRUE;
+        // Modify the backend plugin configuration container element.
+        $form['connector_config']['#type'] = 'details';
+        $form['connector_config']['#title'] = $this->t('Configure %plugin OpenSearch connector', ['%plugin' => $connector->getLabel()]);
+        $form['connector_config']['#description'] = $connector->getDescription();
+        $form['connector_config']['#open'] = TRUE;
+      }
     }
     $form['connector_config'] += ['#type' => 'container'];
+    $form['connector_config']['#attributes'] = [
+      'id' => 'opensearch-connector-config-form',
+    ];
     $form['connector_config']['#tree'] = TRUE;
+  }
+
+  /**
+   * Handles switching the selected connector plugin.
+   */
+  public static function buildAjaxConnectorConfigForm(array $form, FormStateInterface $form_state) {
+    // The work is already done in form(), where we rebuild the entity according
+    // to the current form values and then create the backend configuration form
+    // based on that. So we just need to return the relevant part of the form
+    // here.
+    return $form['backend_config']['connector_config'];
   }
 
   /**

@@ -31,7 +31,7 @@ class FilterBuilder {
     $filters = [];
     $backend_fields = ['_language' => TRUE];
 
-    if (!empty($condition_group)) {
+    if (!empty($condition_group->__toString())) {
       $conjunction = $condition_group->getConjunction();
 
       foreach ($condition_group->getConditions() as $condition) {
@@ -59,10 +59,8 @@ class FilterBuilder {
           // For some data type, we need to do conversions here.
           if (isset($index_fields[$field_id])) {
             $field = $index_fields[$field_id];
-            switch ($field->getType()) {
-              case 'boolean':
-                $condition->setValue((bool) $condition->getValue());
-                break;
+            if ($field->getType() === 'boolean') {
+              $condition->setValue((bool) $condition->getValue());
             }
           }
 
