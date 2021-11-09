@@ -11,8 +11,8 @@ use Elasticsearch\ClientBuilder;
  *
  * @OpenSearchConnector(
  *   id = "basicauth",
- *   label = @Translation("Basic Auth"),
- *   description = @Translation("An OpenSearch connector with Basic authentication.")
+ *   label = @Translation("HTTP Basic Authentication"),
+ *   description = @Translation("OpenSearch connector with HTTP Basic Auth.")
  * )
  */
 class BasicAuthConnector extends StandardConnector {
@@ -23,11 +23,7 @@ class BasicAuthConnector extends StandardConnector {
   public function getClient(): Client {
     // We only support one host.
     return ClientBuilder::create()
-      ->setHosts([
-        [
-          'host' => $this->configuration['url'],
-        ],
-      ])
+      ->setHosts([$this->configuration['url']])
       ->setBasicAuthentication($this->configuration['username'], $this->configuration['password'])
       ->build();
   }
@@ -47,22 +43,14 @@ class BasicAuthConnector extends StandardConnector {
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildConfigurationForm($form, $form_state);
-    $form['auth'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('HTTP Basic Authentication'),
-      '#description' => $this->t('If your OpenSearch server is protected by basic HTTP authentication, enter the login data here.'),
-      '#collapsible' => TRUE,
-      '#collapsed' => empty($this->configuration['username']),
-    ];
-
-    $form['auth']['username'] = [
+    $form['username'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Username'),
       '#default_value' => $this->configuration['username'],
       '#required' => TRUE,
     ];
 
-    $form['auth']['password'] = [
+    $form['password'] = [
       '#type' => 'password',
       '#title' => $this->t('Password'),
       '#description' => $this->t('If this field is left blank and the HTTP username is filled out, the current password will not be changed.'),
@@ -79,13 +67,13 @@ class BasicAuthConnector extends StandardConnector {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
 
-    foreach ($values['auth'] as $key => $value) {
+    foreach ($values as $key => $value) {
       // For password fields, there is no default value, they're empty by
       // default. Therefore, we ignore empty submissions if the user didn't
       // change either.
       if ('password' === $key && '' === $value
-        && isset($this->configuration['auth']['username'])
-        && $values['auth']['username'] === $this->configuration['auth']['username']
+        && isset($this->configuration['username'])
+        && $values['username'] === $this->configuration['username']
       ) {
         $value = $form_state->get('previous_password');
       }
@@ -95,6 +83,9 @@ class BasicAuthConnector extends StandardConnector {
 
     // Clean-up the form to avoid redundant entries in the stored configuration.
     $form_state->unsetValue('auth');
+
+    $this->configuration['username'] = $form_state->getValue('username');
+    $this->configuration['password'] = $form_state->getValue('password');
 
     parent::submitConfigurationForm($form, $form_state);
   }

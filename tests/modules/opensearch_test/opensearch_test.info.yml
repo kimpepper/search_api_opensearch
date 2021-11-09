@@ -1,0 +1,8 @@
+type: module
+name: 'OpenSearch Test'
+description: 'OpenSearch test module'
+package: 'Search API'
+dependencies:
+  - drupal:search_api_test
+core_version_requirement: ^8 || ^9
+hidden: true

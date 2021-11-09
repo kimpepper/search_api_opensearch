@@ -7,3 +7,9 @@ plugin.plugin_configuration.search_api_backend.opensearch:
       label: 'The connector plugin ID'
     connector_config:
       type: plugin.plugin_configuration.opensearch_connector.[%parent.connector]
+    advanced:
+      type: mapping
+      mapping:
+        fuzziness:
+          type: string
+          label: The fuzziness

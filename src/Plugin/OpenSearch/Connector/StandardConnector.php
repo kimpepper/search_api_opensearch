@@ -15,8 +15,7 @@ use Elasticsearch\ClientBuilder;
  * @OpenSearchConnector(
  *   id = "standard",
  *   label = @Translation("Standard"),
- *   description = @Translation("A standard connector usable for local
- *   installations of the standard OpenSearch distribution.")
+ *   description = @Translation("A standard connector without authentication")
  * )
  */
 class StandardConnector extends PluginBase implements OpenSearchConnectorInterface {

@@ -99,7 +99,7 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
    */
   public function defaultConfiguration() {
     return [
-      'connector' => NULL,
+      'connector' => 'standard',
       'connector_config' => [],
       'fuzziness' => self::FUZZINESS_AUTO,
     ];
@@ -118,12 +118,12 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
       '#options' => $options,
       '#default_value' => $this->configuration['connector'],
       '#required' => TRUE,
-     '#ajax' => [
-            'callback' => [get_class($this), 'buildAjaxConnectorConfigForm'],
-            'wrapper' => 'opensearch-connector-config-form',
-            'method' => 'replace',
-            'effect' => 'fade',
-          ],
+      '#ajax' => [
+        'callback' => [$this, 'buildAjaxConnectorConfigForm'],
+        'wrapper' => 'opensearch-connector-config-form',
+        'method' => 'replace',
+        'effect' => 'fade',
+      ],
     ];
 
     $this->buildConnectorConfigForm($form, $form_state);
@@ -168,10 +168,6 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
       $connector = $this->connectorPluginManager->createInstance($connector_id, $this->configuration['connector_config']);
       if ($connector instanceof PluginFormInterface) {
         $form_state->set('connector', $connector_id);
-        if ($form_state->isRebuilding()) {
-          $this->messenger()
-            ->addWarning($this->t('Please configure the selected OpenSearch connector.'));
-        }
         // Attach the OpenSearch connector plugin configuration form.
         $connector_form_state = SubformState::createForSubform($form['connector_config'], $form, $form_state);
         $form['connector_config'] = $connector->buildConfigurationForm($form['connector_config'], $connector_form_state);
