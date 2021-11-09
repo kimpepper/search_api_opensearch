@@ -2,6 +2,7 @@
 
 namespace Drupal\opensearch\SearchAPI\Query;
 
+use Psr\Log\LoggerInterface;
 use Drupal\search_api\Query\QueryInterface;
 
 /**
@@ -15,6 +16,13 @@ class QuerySortBuilder {
    * @var \Psr\Log\LoggerInterface
    */
   protected $logger;
+
+  /**
+   * @param \Psr\Log\LoggerInterface $logger
+   */
+  public function __construct(LoggerInterface $logger) {
+    $this->logger = $logger;
+  }
 
   /**
    * Helper function that returns sort for query in search.
@@ -39,6 +47,9 @@ class QuerySortBuilder {
       }
       elseif ($field_id === 'search_api_id') {
         $sort['id'] = $direction;
+      }
+      elseif ($field_id === '_id') {
+        $sort['_id'] = $direction;
       }
       elseif (isset($index_fields[$field_id])) {
         if (in_array($field_id, $query_full_text_fields)) {

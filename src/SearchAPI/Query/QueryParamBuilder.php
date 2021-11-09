@@ -120,13 +120,18 @@ class QueryParamBuilder {
     $body = [];
 
     // Set the size and from parameters.
-    $body['from'] = $query->getOption('query_offset', self::DEFAULT_OFFSET);
-    $body['size'] = $query->getOption('query_limit', self::DEFAULT_LIMIT);
+    $body['from'] = $query->getOption('offset', self::DEFAULT_OFFSET);
+    $body['size'] = $query->getOption('limit', self::DEFAULT_LIMIT);
 
     // Sort.
     $sort = $this->sortBuilder->getSortSearchQuery($query);
     if (!empty($sort)) {
       $body['sort'] = $sort;
+    }
+
+    $languages = $query->getLanguages();
+    if ($languages !== NULL) {
+      $query->getConditionGroup()->addCondition('_language', $languages, 'IN');
     }
 
     $index_fields = $this->getIndexFields($index);
@@ -204,6 +209,9 @@ class QueryParamBuilder {
     // them.
     if (empty($index_fields['search_api_datasource'])) {
       $index_fields['search_api_datasource'] = $this->fieldsHelper->createField($index, 'search_api_datasource', ['type' => 'string']);
+    }
+    if (empty($index_fields['_id'])) {
+      $index_fields['_id'] = $this->fieldsHelper->createField($index, '_id', ['type' => 'string']);
     }
     return $index_fields;
   }

@@ -346,6 +346,16 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
   }
 
   /**
+   * Pings the opensearch server.
+   *
+   * @return bool
+   *   Returns TRUE if the server can be reached.
+   */
+  public function ping(): bool {
+    return $this->getClient()->ping();
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function indexItems(IndexInterface $index, array $items): array {

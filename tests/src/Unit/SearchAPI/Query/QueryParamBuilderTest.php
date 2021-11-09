@@ -63,9 +63,9 @@ class QueryParamBuilderTest extends UnitTestCase {
       ->willReturn($fields);
 
     $query = $this->prophesize(QueryInterface::class);
-    $query->getOption('query_offset', Argument::any())
+    $query->getOption('offset', Argument::any())
       ->willReturn(0);
-    $query->getOption('query_limit', Argument::any())
+    $query->getOption('limit', Argument::any())
       ->willReturn(10);
     $query->getOption('opensearch_exclude_source_fields', Argument::any())
       ->willReturn([]);

@@ -65,8 +65,10 @@ class SearchParamBuilderTest extends UnitTestCase {
     $searchParams = $builder->buildSearchParams($query, $indexFields);
 
     $expected = [
-      'query' => 'bar~',
-      'fields' => ['foo^'],
+      'query_string' => [
+        'query' => 'bar~',
+        'fields' => ['foo^'],
+      ],
     ];
 
     $this->assertEquals($expected, $searchParams);

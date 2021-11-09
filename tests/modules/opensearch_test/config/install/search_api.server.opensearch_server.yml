@@ -1,6 +1,11 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - opensearch
 id: opensearch_server
-name: 'OpenSearch server'
-description: 'Testing OpenSearch backend.'
+name: opensearch_server
+description: 'Local test server'
 backend: opensearch
 backend_config:
   connector: standard
@@ -8,8 +13,3 @@ backend_config:
     url: 'http://localhost:9200'
   advanced:
     fuzziness: auto
-status: true
-langcode: en
-dependencies:
-  module:
-    - opensearch
