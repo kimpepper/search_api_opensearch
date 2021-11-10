@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\opensearch\SearchAPI;
+namespace Drupal\search_api_opensearch\SearchAPI;
 
-use Drupal\opensearch\Event\FieldMappingEvent;
+use Drupal\search_api_opensearch\Event\FieldMappingEvent;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\FieldInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;

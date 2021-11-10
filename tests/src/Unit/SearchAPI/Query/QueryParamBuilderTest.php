@@ -1,18 +1,18 @@
 <?php
 
-namespace Drupal\Tests\opensearch\Unit\SearchAPI\Query;
+namespace Drupal\Tests\search_api_opensearch\Unit\SearchAPI\Query;
 
-use Drupal\Tests\UnitTestCase;
-use Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder;
-use Drupal\opensearch\SearchAPI\Query\FilterBuilder;
-use Drupal\opensearch\SearchAPI\Query\QueryParamBuilder;
-use Drupal\opensearch\SearchAPI\Query\QuerySortBuilder;
-use Drupal\opensearch\SearchAPI\Query\SearchParamBuilder;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\FieldInterface;
 use Drupal\search_api\Query\ConditionGroupInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Utility\FieldsHelperInterface;
+use Drupal\search_api_opensearch\SearchAPI\MoreLikeThisParamBuilder;
+use Drupal\search_api_opensearch\SearchAPI\Query\FilterBuilder;
+use Drupal\search_api_opensearch\SearchAPI\Query\QueryParamBuilder;
+use Drupal\search_api_opensearch\SearchAPI\Query\QuerySortBuilder;
+use Drupal\search_api_opensearch\SearchAPI\Query\SearchParamBuilder;
+use Drupal\Tests\UnitTestCase;
 use Prophecy\Argument;
 use Psr\Log\NullLogger;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -20,7 +20,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * Tests the query param builder.
  *
- * @coversDefaultClass \Drupal\opensearch\SearchAPI\Query\QueryParamBuilder
+ * @coversDefaultClass \Drupal\search_api_opensearch\SearchAPI\Query\QueryParamBuilder
  * @group opensearch
  */
 class QueryParamBuilderTest extends UnitTestCase {
@@ -71,7 +71,8 @@ class QueryParamBuilderTest extends UnitTestCase {
       ->willReturn([]);
     $query->getOption('search_api_mlt')
       ->willReturn([]);
-
+    $query->getLanguages()
+      ->willReturn(NULL);
     $query->getIndex()
       ->willReturn($index->reveal());
     $conditionGroup = $this->prophesize(ConditionGroupInterface::class);

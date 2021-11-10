@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\Plugin\OpenSearch\Connector;
+namespace Drupal\search_api_opensearch\Plugin\OpenSearch\Connector;
 
 use Drupal\Core\Form\FormStateInterface;
 use Elasticsearch\Client;

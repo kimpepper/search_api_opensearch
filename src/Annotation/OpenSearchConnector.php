@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\Annotation;
+namespace Drupal\search_api_opensearch\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
 
@@ -12,8 +12,8 @@ use Drupal\Component\Annotation\Plugin;
  *
  * Plugin Namespace: Plugin\OpenSearch
  *
- * @see \Drupal\opensearch\Connector\ConnectorPluginManager
- * @see \Drupal\opensearch\Connector\OpenSearchConnectorInterface
+ * @see \Drupal\search_api_opensearch\Connector\ConnectorPluginManager
+ * @see \Drupal\search_api_opensearch\Connector\OpenSearchConnectorInterface
  *
  * @ingroup plugin_api
  *

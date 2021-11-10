@@ -1,7 +1,7 @@
 type: module
-name: 'OpenSearch Test'
-description: 'OpenSearch test module'
-package: 'Search API'
+name: 'Search API OpenSearch Test'
+description: 'Search API OpenSearch test module'
+package: 'Search'
 dependencies:
   - drupal:search_api_test
 core_version_requirement: ^8 || ^9

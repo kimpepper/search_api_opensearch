@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\Tests\opensearch\Unit\SearchAPI\Query;
+namespace Drupal\Tests\search_api_opensearch\Unit\SearchAPI\Query;
 
-use Drupal\opensearch\SearchAPI\Query\FilterBuilder;
+use Drupal\search_api_opensearch\SearchAPI\Query\FilterBuilder;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\Field;
 use Drupal\search_api\Query\Condition;
@@ -12,7 +12,7 @@ use Drupal\Tests\UnitTestCase;
 /**
  * Tests the filter builder.
  *
- * @coversDefaultClass \Drupal\opensearch\SearchAPI\Query\FilterBuilder
+ * @coversDefaultClass \Drupal\search_api_opensearch\SearchAPI\Query\FilterBuilder
  * @group opensearch
  */
 class FilterBuilderTest extends UnitTestCase {

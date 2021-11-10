@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\opensearch\SearchAPI;
+namespace Drupal\search_api_opensearch\SearchAPI;
 
-use Drupal\opensearch\SearchAPI\Query\QueryParamBuilder;
-use Drupal\opensearch\SearchAPI\Query\QueryResultParser;
+use Drupal\search_api_opensearch\SearchAPI\Query\QueryParamBuilder;
+use Drupal\search_api_opensearch\SearchAPI\Query\QueryResultParser;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Query\ResultSetInterface;
@@ -21,21 +21,21 @@ class BackendClient implements BackendClientInterface {
   /**
    * The item param builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\IndexParamBuilder
+   * @var \Drupal\search_api_opensearch\SearchAPI\IndexParamBuilder
    */
   protected $indexParamBuilder;
 
   /**
    * The query param builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\Query\QueryParamBuilder
+   * @var \Drupal\search_api_opensearch\SearchAPI\Query\QueryParamBuilder
    */
   protected $queryParamBuilder;
 
   /**
    * The query result parser.
    *
-   * @var \Drupal\opensearch\SearchAPI\Query\QueryResultParser
+   * @var \Drupal\search_api_opensearch\SearchAPI\Query\QueryResultParser
    */
   protected $resultParser;
 
@@ -56,7 +56,7 @@ class BackendClient implements BackendClientInterface {
   /**
    * The field mapping param builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\FieldMapper
+   * @var \Drupal\search_api_opensearch\SearchAPI\FieldMapper
    */
   protected $fieldParamsBuilder;
 
@@ -70,15 +70,15 @@ class BackendClient implements BackendClientInterface {
   /**
    * Constructs a new BackendClient.
    *
-   * @param \Drupal\opensearch\SearchAPI\Query\QueryParamBuilder $queryParamBuilder
+   * @param \Drupal\search_api_opensearch\SearchAPI\Query\QueryParamBuilder $queryParamBuilder
    *   The query param builder.
-   * @param \Drupal\opensearch\SearchAPI\Query\QueryResultParser $resultParser
+   * @param \Drupal\search_api_opensearch\SearchAPI\Query\QueryResultParser $resultParser
    *   The query result parser.
-   * @param \Drupal\opensearch\SearchAPI\IndexParamBuilder $indexParamBuilder
+   * @param \Drupal\search_api_opensearch\SearchAPI\IndexParamBuilder $indexParamBuilder
    *   The index param builder.
    * @param \Drupal\search_api\Utility\FieldsHelperInterface $fieldsHelper
    *   The fields helper.
-   * @param \Drupal\opensearch\SearchAPI\FieldMapper $fieldParamsBuilder
+   * @param \Drupal\search_api_opensearch\SearchAPI\FieldMapper $fieldParamsBuilder
    *   THe field mapper.
    * @param \Psr\Log\LoggerInterface $logger
    *   The logger.

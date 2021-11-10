@@ -1,7 +1,7 @@
 name: Search API OpenSearch
 description: Provides an OpenSearch backend for Search API.
 core_version_requirement: ^8 || ^9
-package: OpenSearch
+package: Search
 type: module
 dependencies:
   - search_api:search_api

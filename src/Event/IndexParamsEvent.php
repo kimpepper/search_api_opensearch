@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\Event;
+namespace Drupal\search_api_opensearch\Event;
 
 /**
  * Event triggered when index params are built.

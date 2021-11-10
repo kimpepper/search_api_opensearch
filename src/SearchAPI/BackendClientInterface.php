@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\SearchAPI;
+namespace Drupal\search_api_opensearch\SearchAPI;
 
 use Drupal\search_api\IndexInterface;
 

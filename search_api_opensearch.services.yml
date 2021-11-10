@@ -1,0 +1,48 @@
+services:
+
+  plugin.manager.search_api_opensearch.connector:
+    class: Drupal\search_api_opensearch\Connector\ConnectorPluginManager
+    parent: default_plugin_manager
+
+  logger.channel.search_api_opensearch:
+    parent: logger.channel_base
+    arguments: [ 'search_api_opensearch' ]
+
+  search_api_opensearch.index_param_builder:
+    class: Drupal\search_api_opensearch\SearchAPI\IndexParamBuilder
+    arguments: [ '@event_dispatcher' ]
+  search_api_opensearch.query_sort_builder:
+    class: Drupal\search_api_opensearch\SearchAPI\Query\QuerySortBuilder
+    arguments: [ '@logger.channel.search_api_opensearch' ]
+  search_api_opensearch.query_filter_builder:
+    class: Drupal\search_api_opensearch\SearchAPI\Query\FilterBuilder
+  search_api_opensearch.search_param_builder:
+    class: Drupal\search_api_opensearch\SearchAPI\Query\SearchParamBuilder
+  search_api_opensearch.more_like_this_param_builder:
+    class: Drupal\search_api_opensearch\SearchAPI\MoreLikeThisParamBuilder
+  search_api_opensearch.query_param_builder:
+    class: Drupal\search_api_opensearch\SearchAPI\Query\QueryParamBuilder
+    arguments:
+      - '@search_api.fields_helper'
+      - '@search_api_opensearch.query_sort_builder'
+      - '@search_api_opensearch.query_filter_builder'
+      - '@search_api_opensearch.search_param_builder'
+      - '@search_api_opensearch.more_like_this_param_builder'
+      - '@event_dispatcher'
+      - '@logger.channel.search_api_opensearch'
+  search_api_opensearch.query_result_parser:
+    class: Drupal\search_api_opensearch\SearchAPI\Query\QueryResultParser
+    arguments: [ '@search_api.fields_helper' ]
+  search_api_opensearch.field_mapper:
+    class: Drupal\search_api_opensearch\SearchAPI\FieldMapper
+    arguments: [ '@event_dispatcher' ]
+
+  search_api_opensearch.backend_client_factory:
+    class: Drupal\search_api_opensearch\SearchAPI\BackendClientFactory
+    arguments:
+      - '@search_api_opensearch.query_param_builder'
+      - '@search_api_opensearch.query_result_parser'
+      - '@search_api_opensearch.index_param_builder'
+      - '@search_api.fields_helper'
+      - '@search_api_opensearch.field_mapper'
+      - '@logger.channel.search_api_opensearch'

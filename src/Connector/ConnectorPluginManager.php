@@ -1,17 +1,17 @@
 <?php
 
-namespace Drupal\opensearch\Connector;
+namespace Drupal\search_api_opensearch\Connector;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
-use Drupal\opensearch\Annotation\OpenSearchConnector;
+use Drupal\search_api_opensearch\Annotation\OpenSearchConnector;
 
 /**
  * A plugin manager for OpenSearch connector plugins.
  *
- * @see \Drupal\opensearch\Annotation\OpenSearchConnector
- * @see \Drupal\opensearch\Connector\OpenSearchConnectorInterface
+ * @see \Drupal\search_api_opensearch\Annotation\OpenSearchConnector
+ * @see \Drupal\search_api_opensearch\Connector\OpenSearchConnectorInterface
  *
  * @ingroup plugin_api
  */

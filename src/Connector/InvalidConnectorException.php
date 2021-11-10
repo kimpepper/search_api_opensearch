@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\Connector;
+namespace Drupal\search_api_opensearch\Connector;
 
 /**
  * Exception for invalid connector plugins.

@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\Tests\opensearch\Unit\SearchAPI;
+namespace Drupal\Tests\search_api_opensearch\Unit\SearchAPI;
 
-use Drupal\opensearch\SearchAPI\FieldMapper;
+use Drupal\search_api_opensearch\SearchAPI\FieldMapper;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\Field;
 use Drupal\Tests\UnitTestCase;
@@ -11,7 +11,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * Tests the field mapper.
  *
- * @coversDefaultClass \Drupal\opensearch\SearchAPI\FieldMapper
+ * @coversDefaultClass \Drupal\search_api_opensearch\SearchAPI\FieldMapper
  * @group opensearch
  */
 class FieldMapperTest extends UnitTestCase {

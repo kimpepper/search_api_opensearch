@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\Tests\opensearch\Unit\SearchAPI\Query;
+namespace Drupal\Tests\search_api_opensearch\Unit\SearchAPI\Query;
 
-use Drupal\opensearch\Plugin\search_api\backend\OpenSearchBackend;
-use Drupal\opensearch\SearchAPI\Query\SearchParamBuilder;
+use Drupal\search_api_opensearch\Plugin\search_api\backend\OpenSearchBackend;
+use Drupal\search_api_opensearch\SearchAPI\Query\SearchParamBuilder;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\Field;
@@ -14,7 +14,7 @@ use MakinaCorpus\Lucene\Query;
 /**
  * Tests the search param builder.
  *
- * @coversDefaultClass \Drupal\opensearch\SearchAPI\Query\SearchParamBuilder
+ * @coversDefaultClass \Drupal\search_api_opensearch\SearchAPI\Query\SearchParamBuilder
  * @group opensearch
  */
 class SearchParamBuilderTest extends UnitTestCase {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\Plugin\search_api\backend;
+namespace Drupal\search_api_opensearch\Plugin\search_api\backend;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
@@ -9,11 +9,11 @@ use Drupal\Core\Link;
 use Drupal\Core\Plugin\PluginDependencyTrait;
 use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\Core\Url;
-use Drupal\opensearch\Connector\ConnectorPluginManager;
-use Drupal\opensearch\Connector\InvalidConnectorException;
-use Drupal\opensearch\Connector\OpenSearchConnectorInterface;
-use Drupal\opensearch\SearchAPI\BackendClientFactory;
-use Drupal\opensearch\SearchAPI\BackendClientInterface;
+use Drupal\search_api_opensearch\Connector\ConnectorPluginManager;
+use Drupal\search_api_opensearch\Connector\InvalidConnectorException;
+use Drupal\search_api_opensearch\Connector\OpenSearchConnectorInterface;
+use Drupal\search_api_opensearch\SearchAPI\BackendClientFactory;
+use Drupal\search_api_opensearch\SearchAPI\BackendClientInterface;
 use Drupal\search_api\Backend\BackendPluginBase;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Query\QueryInterface;
@@ -43,21 +43,21 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
   /**
    * The client factory.
    *
-   * @var \Drupal\opensearch\Connector\ConnectorPluginManager
+   * @var \Drupal\search_api_opensearch\Connector\ConnectorPluginManager
    */
   protected $connectorPluginManager;
 
   /**
    * The OpenSearch backend client factory.
    *
-   * @var \Drupal\opensearch\SearchAPI\BackendClientFactory
+   * @var \Drupal\search_api_opensearch\SearchAPI\BackendClientFactory
    */
   protected $backendClientFactory;
 
   /**
    * The OpenSearch Search API client.
    *
-   * @var \Drupal\opensearch\SearchAPI\BackendClient
+   * @var \Drupal\search_api_opensearch\SearchAPI\BackendClient
    */
   protected $backendClient;
 
@@ -72,8 +72,8 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
    * @param array $configuration
    * @param $plugin_id
    * @param array $plugin_definition
-   * @param \Drupal\opensearch\Connector\ConnectorPluginManager $connectorPluginManager
-   * @param \Drupal\opensearch\SearchAPI\BackendClientFactory $sapiClientFactory
+   * @param \Drupal\search_api_opensearch\Connector\ConnectorPluginManager $connectorPluginManager
+   * @param \Drupal\search_api_opensearch\SearchAPI\BackendClientFactory $sapiClientFactory
    */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition, ConnectorPluginManager $connectorPluginManager, BackendClientFactory $sapiClientFactory) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -89,8 +89,8 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.opensearch.connector'),
-      $container->get('opensearch.backend_client_factory')
+      $container->get('plugin.manager.search_api_opensearch.connector'),
+      $container->get('search_api_opensearch.backend_client_factory')
     );
   }
 
@@ -264,12 +264,12 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
   /**
    * Gets the OpenSearch connector.
    *
-   * @return \Drupal\opensearch\Connector\OpenSearchConnectorInterface
+   * @return \Drupal\search_api_opensearch\Connector\OpenSearchConnectorInterface
    *   The OpenSearch connector.
    *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    *   Thrown when a plugin error occurs.
-   * @throws \Drupal\opensearch\Connector\InvalidConnectorException
+   * @throws \Drupal\search_api_opensearch\Connector\InvalidConnectorException
    *   Thrown when a connector is invalid.
    */
   public function getConnector(): OpenSearchConnectorInterface {
@@ -296,7 +296,7 @@ class OpenSearchBackend extends BackendPluginBase implements PluginFormInterface
   /**
    * Gets the OpenSearch Search API client.
    *
-   * @return \Drupal\opensearch\SearchAPI\BackendClientInterface
+   * @return \Drupal\search_api_opensearch\SearchAPI\BackendClientInterface
    *   The OpenSearch Search API client.
    */
   public function getBackendClient(): BackendClientInterface {

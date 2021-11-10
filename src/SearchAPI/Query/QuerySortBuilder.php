@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\SearchAPI\Query;
+namespace Drupal\search_api_opensearch\SearchAPI\Query;
 
 use Psr\Log\LoggerInterface;
 use Drupal\search_api\Query\QueryInterface;

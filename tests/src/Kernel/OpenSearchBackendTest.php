@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\Tests\Kernel;
+namespace Drupal\search_api_opensearch\Tests\Kernel;
 
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\Query\QueryInterface;
@@ -19,8 +19,8 @@ class OpenSearchBackendTest extends BackendTestBase {
    * {@inheritdoc}
    */
   public static $modules = [
-    'opensearch',
-    'opensearch_test',
+    'search_api_opensearch',
+    'search_api_opensearch_test',
   ];
 
   /**
@@ -39,8 +39,8 @@ class OpenSearchBackendTest extends BackendTestBase {
   public function setUp() {
     parent::setUp();
     $this->installConfig([
-      'opensearch',
-      'opensearch_test',
+      'search_api_opensearch',
+      'search_api_opensearch_test',
     ]);
     if (!$this->serverAvailable()) {
       $this->markTestSkipped("OpenSearch server not available");
@@ -78,7 +78,7 @@ class OpenSearchBackendTest extends BackendTestBase {
     $this->updateIndex();
     $this->searchNoResults();
     $this->indexItems($this->indexId);
-    sleep(1);
+    sleep(6);
     $this->searchSuccess();
   }
 

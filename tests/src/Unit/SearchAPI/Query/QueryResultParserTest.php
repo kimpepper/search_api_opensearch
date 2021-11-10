@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\Tests\opensearch\Unit\SearchAPI\Query;
+namespace Drupal\Tests\search_api_opensearch\Unit\SearchAPI\Query;
 
-use Drupal\opensearch\SearchAPI\Query\QueryResultParser;
+use Drupal\search_api_opensearch\SearchAPI\Query\QueryResultParser;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\Field;
 use Drupal\search_api\Item\Item;
@@ -15,7 +15,7 @@ use Prophecy\Argument;
 /**
  * Tests the query result parser.
  *
- * @coversDefaultClass \Drupal\opensearch\SearchAPI\Query\QueryResultParser
+ * @coversDefaultClass \Drupal\search_api_opensearch\SearchAPI\Query\QueryResultParser
  * @group opensearch
  */
 class QueryResultParserTest extends UnitTestCase {

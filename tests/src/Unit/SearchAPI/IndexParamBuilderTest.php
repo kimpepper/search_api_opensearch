@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\Tests\opensearch\Unit\SearchAPI;
+namespace Drupal\Tests\search_api_opensearch\Unit\SearchAPI;
 
-use Drupal\opensearch\SearchAPI\IndexParamBuilder;
+use Drupal\search_api_opensearch\SearchAPI\IndexParamBuilder;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Item\Field;
 use Drupal\search_api\Item\Item;
@@ -12,7 +12,7 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 /**
  * Tests the index param builder.
  *
- * @coversDefaultClass \Drupal\opensearch\SearchAPI\IndexParamBuilder
+ * @coversDefaultClass \Drupal\search_api_opensearch\SearchAPI\IndexParamBuilder
  * @group opensearch
  */
 class IndexParamBuilderTest extends UnitTestCase {
@@ -20,7 +20,7 @@ class IndexParamBuilderTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['search_api', 'opensearch'];
+  protected static $modules = ['search_api', 'search_api_opensearch'];
 
   /**
    * @covers ::buildIndexParams

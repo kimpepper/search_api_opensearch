@@ -1,15 +1,15 @@
 <?php
 
-namespace Drupal\Tests\opensearch\Unit\SearchAPI;
+namespace Drupal\Tests\search_api_opensearch\Unit\SearchAPI;
 
-use Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder;
+use Drupal\search_api_opensearch\SearchAPI\MoreLikeThisParamBuilder;
 use Drupal\Tests\UnitTestCase;
 
 /**
  * Tests the More Like This param builder.
  *
  * @opensearch
- * @coversDefaultClass \Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder
+ * @coversDefaultClass \Drupal\search_api_opensearch\SearchAPI\MoreLikeThisParamBuilder
  */
 class MoreLikeThisParamBuilderTest extends UnitTestCase {
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\opensearch\SearchAPI\Query;
+namespace Drupal\search_api_opensearch\SearchAPI\Query;
 
-use Drupal\opensearch\Event\QueryParamsEvent;
-use Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder;
+use Drupal\search_api_opensearch\Event\QueryParamsEvent;
+use Drupal\search_api_opensearch\SearchAPI\MoreLikeThisParamBuilder;
 use Drupal\search_api\IndexInterface;
 use Drupal\search_api\Query\QueryInterface;
 use Drupal\search_api\Utility\FieldsHelperInterface;
@@ -49,28 +49,28 @@ class QueryParamBuilder {
   /**
    * The MLT param builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder
+   * @var \Drupal\search_api_opensearch\SearchAPI\MoreLikeThisParamBuilder
    */
   protected $mltParamBuilder;
 
   /**
    * The search param builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\Query\SearchParamBuilder
+   * @var \Drupal\search_api_opensearch\SearchAPI\Query\SearchParamBuilder
    */
   protected $searchParamBuilder;
 
   /**
    * The sort builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\Query\QuerySortBuilder
+   * @var \Drupal\search_api_opensearch\SearchAPI\Query\QuerySortBuilder
    */
   protected $sortBuilder;
 
   /**
    * The filter builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\Query\FilterBuilder
+   * @var \Drupal\search_api_opensearch\SearchAPI\Query\FilterBuilder
    */
   protected $filterBuilder;
 
@@ -79,13 +79,13 @@ class QueryParamBuilder {
    *
    * @param \Drupal\search_api\Utility\FieldsHelperInterface $fieldsHelper
    *   The fields helper.
-   * @param \Drupal\opensearch\SearchAPI\Query\QuerySortBuilder $sortBuilder
+   * @param \Drupal\search_api_opensearch\SearchAPI\Query\QuerySortBuilder $sortBuilder
    *   The sort builder.
-   * @param \Drupal\opensearch\SearchAPI\Query\FilterBuilder $filterBuilder
+   * @param \Drupal\search_api_opensearch\SearchAPI\Query\FilterBuilder $filterBuilder
    *   The filter builder.
-   * @param \Drupal\opensearch\SearchAPI\Query\SearchParamBuilder $searchParamBuilder
+   * @param \Drupal\search_api_opensearch\SearchAPI\Query\SearchParamBuilder $searchParamBuilder
    *   The search param builder.
-   * @param \Drupal\opensearch\SearchAPI\MoreLikeThisParamBuilder $mltParamBuilder
+   * @param \Drupal\search_api_opensearch\SearchAPI\MoreLikeThisParamBuilder $mltParamBuilder
    *   The More Like This param builder.
    * @param \Symfony\Contracts\EventDispatcher\EventDispatcherInterface $eventDispatcher
    *   The event dispatcher.

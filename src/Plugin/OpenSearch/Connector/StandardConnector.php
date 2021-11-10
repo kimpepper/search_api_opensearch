@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\opensearch\Plugin\OpenSearch\Connector;
+namespace Drupal\search_api_opensearch\Plugin\OpenSearch\Connector;
 
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
-use Drupal\opensearch\Connector\OpenSearchConnectorInterface;
+use Drupal\search_api_opensearch\Connector\OpenSearchConnectorInterface;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
 

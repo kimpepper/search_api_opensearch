@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\SearchAPI\Query;
+namespace Drupal\search_api_opensearch\SearchAPI\Query;
 
 use Drupal\Component\Utility\Html;
 use Drupal\elasticsearch_connector\Event\PrepareSearchQueryEvent;
@@ -36,14 +36,14 @@ class QueryOptionsBuilder {
   /**
    * The key flattener.
    *
-   * @var \Drupal\opensearch\SearchAPI\KeyFlattener
+   * @var \Drupal\search_api_opensearch\SearchAPI\KeyFlattener
    */
   protected $keyFlattener;
 
   /**
    * The sort builder.
    *
-   * @var \Drupal\opensearch\SearchAPI\Query\QuerySortBuilder
+   * @var \Drupal\search_api_opensearch\SearchAPI\Query\QuerySortBuilder
    */
   protected $sortBuilder;
 
@@ -130,7 +130,7 @@ class QueryOptionsBuilder {
       $sort = $this->sortBuilder->getSortSearchQuery($query);
     }
     catch (ElasticsearchException $e) {
-      watchdog_exception('opensearch', $e);
+      watchdog_exception('search_api_opensearch', $e);
     }
 
     $languages = $query->getLanguages();

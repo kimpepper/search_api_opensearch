@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\opensearch\Connector;
+namespace Drupal\search_api_opensearch\Connector;
 
 use Drupal\Component\Plugin\ConfigurableInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
